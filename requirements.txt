@@ -1,12 +1,11 @@
 streamlit
-datetime
+backtrader
 datetime
 pandas
 numpy
 plotly
 pandas_datareader
 yfinance
-backtrader
 matplotlib==3.2.2
 mplfinance
 nltk
