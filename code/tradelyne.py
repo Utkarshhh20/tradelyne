@@ -229,7 +229,7 @@ menu_data = [
     {'icon': "bi bi-pie-chart", 'label':"Portfolio Optimizer"},
     {'icon': "bi bi-telephone", 'label':"Contact us"},
 ]
-over_theme = {'txc_inactive': "#D3D3D3",'menu_background':'#3677a8','txc_active':'white','option_active':'#3677a8'}
+over_theme = {'txc_inactive': "#D3D3D3",'menu_background':'#154a73','txc_active':'white','option_active':'#154a73'}
 dashboard = hc.nav_bar(
 menu_definition=menu_data,
 override_theme=over_theme,
