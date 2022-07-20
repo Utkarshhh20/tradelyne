@@ -486,12 +486,20 @@ elif dashboard=='Screener':
     </body>
     '''
     with screen:
+        st.write(' ')
+        st.write(' ')
         st.markdown(screener, unsafe_allow_html=True)
     with start:
+        st.write(' ')
+        st.write(' ')
         start_date= st.date_input("Start date", oneyr)
     with end:
+        st.write(' ')
+        st.write(' ')
         end_date = st.date_input("End date", today)
     with stock:
+            st.write(' ')
+            st.write(' ')
             ticker_list = pd.read_csv('https://raw.githubusercontent.com/dataprofessor/s-and-p-500-companies/master/data/constituents_symbols.txt')
             tickerSymbol = st.text_input('Stock ticker', value='TSLA')# ticker_list Select ticker symbol
             tickerData = yf.Ticker(tickerSymbol) # Get ticker data
