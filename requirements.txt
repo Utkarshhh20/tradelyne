@@ -1,0 +1,17 @@
+streamlit
+datetime
+datetime
+pandas
+numpy
+plotly
+pandas_datareader
+yfinance
+matplotlib==3.2.2
+mplfinance
+nltk
+urllib3
+bs4
+hydralit
+PyPortfolioOpt
+yahooquery
+gunicorn
