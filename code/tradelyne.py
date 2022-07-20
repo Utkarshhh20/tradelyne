@@ -221,17 +221,6 @@ def backtestrsi():
     #st.write(stats)
     strategy=''
 
-
-page_bg_img = '''
-<style>
-body {
-background-image: url('https://cdn.myportfolio.com/fd40c2a8-1f6f-47d7-8997-48ba5415a69c/6c46ac13-6a18-427a-9baa-01ad3b53ac45_rw_600.png?h=21b14417887f0576feb32fcbfd191788');
-background-size: cover;
-}
-</style>
-<body>
-</body>
-'''
 st.markdown(page_bg_img, unsafe_allow_html=True)
 menu_data = [
     {'icon': "bi bi-window", 'label':"Screener"},
@@ -252,18 +241,7 @@ sticky_mode='sticky', #jumpy or not-jumpy, but sticky or pinned
 use_animation=True,
 key='NavBar'
 )
-#selected=option_menu(
-#    menu_title=None,
-#    options=[1,2,3],
-#    icons=['stocks', 'laptop', 'plane'],
-#    orientation='horizontal',
-#    styles={
-#            "container": {"padding": "0!important", "background-color": "#fafafa"},
-#            "icon": {"color": "orange", "font-size": "25px"}, 
-#            "nav-link": {"font-size": "25px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
-#            "nav-link-selected": {"background-color": "green"},
-#        }
-#)'''
+
 if dashboard=='Tradelyne':
     logo='''
         <style>
@@ -487,6 +465,8 @@ if dashboard=='Tradelyne':
         st.write('____________________')
 
 elif dashboard=='Screener':
+    st.write(' ')
+    st.write(' ')
     screen, start, end, stock=st.columns([1,0.7,0.7,0.7])
     screener='''
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
