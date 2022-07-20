@@ -220,8 +220,7 @@ def backtestrsi():
     st.write(stratdd[0].analyzers.sr.get_analysis())
     #st.write(stats)
     strategy=''
-
-st.markdown(page_bg_img, unsafe_allow_html=True)
+    
 menu_data = [
     {'icon': "bi bi-window", 'label':"Screener"},
     {'icon': "bi bi-clipboard-data", 'label':"Fundamental analysis"},
