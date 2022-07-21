@@ -476,7 +476,7 @@ elif dashboard=='Screener':
         font-weight:1000;
         font-style: bold;
         float:left;
-        margin-left:80px;
+        margin-left:40px;
         margin-top: 35px;
     }
     </style>
