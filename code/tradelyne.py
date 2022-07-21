@@ -300,14 +300,14 @@ if dashboard=='Tradelyne':
     </body>
     '''
     tech='''
+        meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
         .taimg {
-        margin-left: auto;
-        margin-right: auto;
         z-index: 1;
         width: 400px;
         position: relative;
         border-radius: 5%;
+        float:center;
         }
         </style>
         <body>
