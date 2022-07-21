@@ -245,7 +245,7 @@ if dashboard=='Tradelyne':
     logo='''
         <style>
         .logo{
-            width: 600px;
+            width: 50%;
             margin-top:-100px;
             margin-left:-30px;
         }
@@ -307,7 +307,7 @@ if dashboard=='Tradelyne':
         width: 400px;
         position: relative;
         border-radius: 5%;
-        margin-left: 40px;
+        margin-left: 10px;
         }
         </style>
         <body>
@@ -352,7 +352,7 @@ if dashboard=='Tradelyne':
         width: 400px;
         position: relative;
         border-radius: 5%;
-        margin-left: 40px;
+        margin-left: 10px;
         }
         </style>
         <body>
