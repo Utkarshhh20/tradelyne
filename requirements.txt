@@ -11,6 +11,7 @@ mplfinance
 nltk
 urllib3
 bs4
+yahoo_fin
 hydralit
 tweepy
 PyPortfolioOpt
