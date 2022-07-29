@@ -8,7 +8,6 @@ import pandas_datareader as pdr
 import mplfinance as fplt
 import backtrader as bt 
 import matplotlib.pyplot as plt
-import talib
 import matplotlib
 import requests
 import tweepy
