@@ -1070,43 +1070,6 @@ elif dashboard=='Screener':
                 st.markdown(compdataheader, unsafe_allow_html=True)
                 st.dataframe(tickerDf)
                 info = tickerData.info 
-                #fundInfo = {
-                #        'Enterprise Value (USD)': info['enterpriseValue'],
-                #        'Enterprise To Revenue Ratio': info['enterpriseToRevenue'],
-                #        'Enterprise To Ebitda Ratio': info['enterpriseToEbitda'],
-                #        'Net Income (USD)': info['netIncomeToCommon'],
-                #        'Profit Margin Ratio': info['profitMargins'],
-                #        'Forward PE Ratio': info['forwardPE'],
-                #        'PEG Ratio': info['pegRatio'],
-                #        'Price to Book Ratio': info['priceToBook'],
-                #        'Forward EPS (USD)': info['forwardEps'],
-                #        'Beta ': info['beta'],
-                #        'Book Value (USD)': info['bookValue'],
-                #        'Dividend Rate (%)': info['dividendRate'], 
-                #        'Dividend Yield (%)': info['dividendYield'],
-                #        'Five year Avg Dividend Yield (%)': info['fiveYearAvgDividendYield'],
-                #        'Payout Ratio': info['payoutRatio']
-                #    }
-                
-                #fundDF = pd.DataFrame.from_dict(fundInfo, orient='index')
-                #fundDF = fundDF.rename(columns={0: 'Value'})
-                #st.subheader('Fundamental Info') 
-                #st.table(fundDF)
-                #marketInfo = {
-                #        "Volume": info['volume'],
-                #        "Average Volume": info['averageVolume'],
-                #        "Market Cap": info["marketCap"],
-                #        "Float Shares": info['floatShares'],
-                #        "Regular Market Price (USD)": info['regularMarketPrice'],
-                #        'Bid Size': info['bidSize'],
-                #        'Ask Size': info['askSize'],
-                #        "Share Short": info['sharesShort'],
-                #        'Short Ratio': info['shortRatio'],
-                #        'Share Outstanding': info['sharesOutstanding']
-                #    }
-                
-                #marketDF = pd.DataFrame(data=marketInfo, index=[0])
-                #st.table(marketDF)
                 st.write('___________________________')
                 st.write('')
                 insiderheader='''
@@ -1174,32 +1137,30 @@ elif dashboard=='Screener':
             st.write(' ')
             st.write(' ')
             st.header("Stock News Sentiment Analyzer")
-
             try:
-                    st.subheader("Hourly and Daily Sentiment of {} Stock".format(tickerSymbol))
-		    st.write('Hi')
-                    news_table = news_headlines(tickerSymbol)
-                    parsed_news_df = parse_news(news_table)
-                    parsed_and_scored_news = score_news(parsed_news_df)
-                    fig_hourly = plot_hourly_sentiment(parsed_and_scored_news, tickerSymbol)
-                    fig_daily = plot_daily_sentiment(parsed_and_scored_news, tickerSymbol) 
-                    graph1, graph2=st.columns(2)
-                    with graph1:
-                        st.plotly_chart(fig_hourly)
-                    with graph2:
-                        st.plotly_chart(fig_daily)
-
-                    description = """
+                st.subheader("Hourly and Daily Sentiment of {} Stock".format(tickerSymbol))
+	        st.write('Hi')
+                news_table = news_headlines(tickerSymbol)
+                parsed_news_df = parse_news(news_table)
+                parsed_and_scored_news = score_news(parsed_news_df)
+                fig_hourly = plot_hourly_sentiment(parsed_and_scored_news, tickerSymbol)
+                fig_daily = plot_daily_sentiment(parsed_and_scored_news, tickerSymbol) 
+                graph1, graph2=st.columns(2)
+                with graph1:
+                    st.plotly_chart(fig_hourly)
+                with graph2:
+                    st.plotly_chart(fig_daily)
+                description = """
                         The above chart averages the sentiment scores of {} stock hourly and daily.
                         The table below gives each of the most recent headlines of the stock and the negative, neutral, positive and an aggregated sentiment score.
                         Sentiments are given by the nltk.sentiment.vader Python library.
                         """.format(tickerSymbol)
                         
-                    st.write(description)	 
-                    st.table(parsed_and_scored_news)
+                st.write(description)	 
+                st.table(parsed_and_scored_news)
                     
             except:
-                    st.write("Enter a correct stock ticker, e.g. 'AAPL' above and hit Enter.")	
+                st.write("Enter a correct stock ticker, e.g. 'AAPL' above and hit Enter.")	
 if dashboard=='Backtesting':
     backtest, blank, s1,s2,s3,s4, s5 =st.columns([2, 0.5, 0.75, 0.75, 0.75, 0.75, 0.75])
     with backtest:
