@@ -537,7 +537,6 @@ def backtestbb(ticker, start, end, cash):
 
 menu_data = [
     {'icon': "bi bi-window", 'label':"Screener"},
-    {'icon': "bi bi-binoculars", 'label':"Technical Indicators"},
     {'icon': "bi bi-skip-backward", 'label':"Backtesting"},
     {'icon': "bi bi-pie-chart", 'label':"Portfolio Optimizer"},
     {'icon': "bi bi-twitter", 'label':"Twitter Analysis"},
@@ -789,9 +788,10 @@ if dashboard=='Tradelyne':
         st.write('____________________')
 
 elif dashboard=='Screener':
-    screen, start, end, stock=st.columns([1,0.7,0.7,0.7])
+    st.write(' ')
     st.write(' ')
     st.write(' ')	
+    screen, start, end, stock=st.columns([1,0.7,0.7,0.7])	
     screener='''
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
     <style>
@@ -1155,6 +1155,9 @@ elif dashboard=='Screener':
                 st.table(parsed_and_scored_news)
                     
 if dashboard=='Backtesting':
+    st.write(' ')
+    st.write(' ')
+    st.write(' ')	 
     backtest, blank, s1,s2,s3,s4, s5 =st.columns([2, 0.5, 0.75, 0.75, 0.75, 0.75, 0.75])
     with backtest:
         backtest_head='''
@@ -1207,6 +1210,9 @@ if dashboard=='Backtesting':
     while strategy=='Bollinger Bands':
         backtestbb(ticker=ticker, start=start, end=end, cash=cash)
 if dashboard=='Portfolio Optimizer':
+    st.write(' ')
+    st.write(' ')
+    st.write(' ')	
     #st.set_page_config(page_title = "Bohmian's Stock Portfolio Optimizer", layout = "wide")
     s = Screener()
     tickers_strings = ''
@@ -1396,6 +1402,9 @@ if dashboard=='Portfolio Optimizer':
         st.write('Enter correct stock tickers to be included in portfolio separated\
         by commas WITHOUT spaces, e.g. "MA,FB,V,AMZN,JPM,BA"and hit Enter.')
 if dashboard=='Twitter Analysis':
+    st.write(' ')
+    st.write(' ')
+    st.write(' ')
     icon, dashboard, dashboard2=st.columns([1.0,0.7,0.7])
     tweepytxt='''
             <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
