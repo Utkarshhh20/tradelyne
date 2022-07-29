@@ -1139,7 +1139,6 @@ elif dashboard=='Screener':
             st.header("Stock News Sentiment Analyzer")
             try:
                 st.subheader("Hourly and Daily Sentiment of {} Stock".format(tickerSymbol))
-	        st.write('Hi')
                 news_table = news_headlines(tickerSymbol)
                 parsed_news_df = parse_news(news_table)
                 parsed_and_scored_news = score_news(parsed_news_df)
