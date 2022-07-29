@@ -120,7 +120,6 @@ def parse_news(news_table):
     return parsed_news_df
         
 def score_news(parsed_news_df):
-    nltk.downloader.download('vader_lexicon')
     vader = SentimentIntensityAnalyzer()
     
     # Iterate through the headlines and get the polarity scores using vader
