@@ -1127,9 +1127,10 @@ elif dashboard=='Screener':
             st.write(' ')
             st.write(' ')
             st.header("Stock News Sentiment Analyzer")
-	    try:
-		st.subheader("Hourly and Daily Sentiment of {} Stock".format(tickerSymbol))
-                st.write('hi')
+            if dashboard=='Screener':
+		
+	        
+                st.subheader("Hourly and Daily Sentiment of {} Stock".format(tickerSymbol))
                 news_table = news_headlines(tickerSymbol)
                 parsed_news_df = parse_news(news_table)
                 parsed_and_scored_news = score_news(parsed_news_df)
@@ -1150,8 +1151,6 @@ elif dashboard=='Screener':
                 st.write(description)	 
                 st.table(parsed_and_scored_news)
                     
-            except:
-                st.write("Enter a correct stock ticker, e.g. 'AAPL' above and hit Enter.")	
 if dashboard=='Backtesting':
     backtest, blank, s1,s2,s3,s4, s5 =st.columns([2, 0.5, 0.75, 0.75, 0.75, 0.75, 0.75])
     with backtest:
