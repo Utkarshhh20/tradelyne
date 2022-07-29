@@ -16,7 +16,6 @@ import plotly.graph_objs as go
 from rsi import RSIStrategy
 from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup as bs
-from streamlit_option_menu import option_menu
 from string import Template
 from datetime import date, timedelta
 from yahoo_fin import stock_info as si 
