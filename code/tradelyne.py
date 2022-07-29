@@ -1,4 +1,5 @@
 import streamlit as st
+nltk.download("vader_lexicon")
 import hydralit_components as hc
 import datetime
 import pandas as pd 
