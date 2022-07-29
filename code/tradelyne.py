@@ -8,16 +8,26 @@ import pandas_datareader as pdr
 import mplfinance as fplt
 import backtrader as bt 
 import matplotlib.pyplot as plt
+import talib
 import matplotlib
+import requests
+import tweepy
 import plotly.graph_objs as go
 from rsi import RSIStrategy
 from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup as bs
+from streamlit_option_menu import option_menu
 from string import Template
 from datetime import date, timedelta
+from yahoo_fin import stock_info as si 
+from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode
+
 st.set_page_config(page_title='Tradelyne', layout="wide",initial_sidebar_state='collapsed')
 today=date.today()
 oneyr= today - timedelta(days=365)
+count=1
+newscount=0
+additional=[]
 def get_fundamentals():
     try:
         # Find fundamentals table
@@ -220,16 +230,28 @@ def backtestrsi():
     st.write(stratdd[0].analyzers.sr.get_analysis())
     #st.write(stats)
     strategy=''
-    
+
+
+page_bg_img = '''
+<style>
+body {
+background-image: url('https://cdn.myportfolio.com/fd40c2a8-1f6f-47d7-8997-48ba5415a69c/6c46ac13-6a18-427a-9baa-01ad3b53ac45_rw_600.png?h=21b14417887f0576feb32fcbfd191788');
+background-size: cover;
+}
+</style>
+<body>
+</body>
+'''
+st.markdown(page_bg_img, unsafe_allow_html=True)
 menu_data = [
     {'icon': "bi bi-window", 'label':"Screener"},
-    {'icon': "bi bi-clipboard-data", 'label':"Fundamental analysis"},
     {'icon': "bi bi-binoculars", 'label':"Technical Indicators"},
     {'icon': "bi bi-skip-backward", 'label':"Backtesting"},
     {'icon': "bi bi-pie-chart", 'label':"Portfolio Optimizer"},
-    {'icon': "bi bi-telephone", 'label':"Contact us"},
+    {'icon': "bi bi-twitter", 'label':"Twitter Analysis"},
 ]
-over_theme = {'txc_inactive': "#D3D3D3",'menu_background':'#154a73','txc_active':'white','option_active':'#154a73'}
+#    {'icon': "bi bi-telephone", 'label':"Contact us"},
+over_theme = {'txc_inactive': "#D3D3D3",'menu_background':'#3948A5','txc_active':'white','option_active':'#3948A5'}
 dashboard = hc.nav_bar(
 menu_definition=menu_data,
 override_theme=over_theme,
@@ -240,13 +262,24 @@ sticky_mode='sticky', #jumpy or not-jumpy, but sticky or pinned
 use_animation=True,
 key='NavBar'
 )
-
+#selected=option_menu(
+#    menu_title=None,
+#    options=[1,2,3],
+#    icons=['stocks', 'laptop', 'plane'],
+#    orientation='horizontal',
+#    styles={
+#            "container": {"padding": "0!important", "background-color": "#fafafa"},
+#            "icon": {"color": "orange", "font-size": "25px"}, 
+#            "nav-link": {"font-size": "25px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
+#            "nav-link-selected": {"background-color": "green"},
+#        }
+#)'''
 if dashboard=='Tradelyne':
     logo='''
         <style>
         .logo{
-            width: 400px;
-            margin-top:-50px;
+            width: 300px;
+            margin-top:-210px;
             margin-left:-30px;
         }
         </style>
@@ -300,14 +333,14 @@ if dashboard=='Tradelyne':
     </body>
     '''
     tech='''
-        <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
         .taimg {
+        float: center;
         z-index: 1;
         width: 400px;
         position: relative;
         border-radius: 5%;
-        float:center;
+        margin-left: 10px;
         }
         </style>
         <body>
@@ -352,7 +385,7 @@ if dashboard=='Tradelyne':
         width: 400px;
         position: relative;
         border-radius: 5%;
-        margin-left: 0px;
+        margin-left: 10px;
         }
         </style>
         <body>
@@ -464,8 +497,6 @@ if dashboard=='Tradelyne':
         st.write('____________________')
 
 elif dashboard=='Screener':
-    st.write(' ')
-    st.write(' ')
     screen, start, end, stock=st.columns([1,0.7,0.7,0.7])
     screener='''
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
@@ -476,7 +507,7 @@ elif dashboard=='Screener':
         font-weight:1000;
         font-style: bold;
         float:left;
-        margin-left:40px;
+        margin-left:80px;
         margin-top: 35px;
     }
     </style>
@@ -486,20 +517,12 @@ elif dashboard=='Screener':
     </body>
     '''
     with screen:
-        st.write(' ')
-        st.write(' ')
         st.markdown(screener, unsafe_allow_html=True)
     with start:
-        st.write(' ')
-        st.write(' ')
         start_date= st.date_input("Start date", oneyr)
     with end:
-        st.write(' ')
-        st.write(' ')
         end_date = st.date_input("End date", today)
     with stock:
-            st.write(' ')
-            st.write(' ')
             ticker_list = pd.read_csv('https://raw.githubusercontent.com/dataprofessor/s-and-p-500-companies/master/data/constituents_symbols.txt')
             tickerSymbol = st.text_input('Stock ticker', value='TSLA')# ticker_list Select ticker symbol
             tickerData = yf.Ticker(tickerSymbol) # Get ticker data
@@ -587,7 +610,7 @@ elif dashboard=='Screener':
             matplotlib.use('Agg')
             plt.show(block=False)
             def get_historical_data(symbol, start_date = None):
-                df = pdr.get_data_yahoo(symbol, start=start_date, end=datetime.datetime.now())
+                df = pdr.get_data_yahoo(symbol, start=start_date, end=end_date)
                 df = df.rename(columns = {'Open': 'open', 'High': 'high', 'Low': 'low', 'Close': 'close', 'Adj Close': 'adj close', 'Volume': 'volume'})
                 for i in df.columns:
                     df[i] = df[i].astype(float)
@@ -606,6 +629,9 @@ elif dashboard=='Screener':
                 with st.form('settings_form'):
                     #show_data = st.checkbox('Show data table', True)
 
+                    show_volume = st.checkbox('Show volume', True)
+                    show_rsi = st.checkbox('Show Relative Strength Index (RSI)', False)
+                    show_macd = st.checkbox('Show Moving Average Convergence and Divergence (MACD)', False)
                     show_nontrading_days = st.checkbox('Show non-trading days', False)
 
                     # https://github.com/matplotlib/mplfinance/blob/master/examples/styles.ipynb
@@ -627,6 +653,44 @@ elif dashboard=='Screener':
                     st.form_submit_button('Apply')
 
                 data = get_historical_data(tickerSymbol, str(start_date))
+                start_date_rsi=start_date - timedelta(days=14)
+                df_rsi=yf.download(tickerSymbol, start=start_date_rsi, end=end_date)
+                rsi_data=talib.RSI(df_rsi['Close'], timeperiod=14)
+                rsi_data=rsi_data.dropna()
+                while len(rsi_data)<len(data):
+                    print(len(rsi_data),len(data))
+                    start_date_rsi=start_date_rsi - timedelta(days=1)
+                    df_rsi=yf.download(tickerSymbol, start=start_date_rsi, end=end_date)
+                    rsi_data=talib.RSI(df_rsi['Close'], timeperiod=14)
+                    rsi_data=rsi_data.dropna()
+                start_date_macd=start_date - timedelta(days=41)
+                df_macd=yf.download(tickerSymbol, start=start_date_macd, end=end_date)
+                macd, macdsignal, macdhist = talib.MACD(df_macd['Close'], fastperiod=12, slowperiod=26, signalperiod=9)
+                macd, macdsignal, macdhist= macd.dropna(), macdsignal.dropna(), macdhist.dropna()
+                while len(macd)<len(data):
+                    print(len(macd),len(data))
+                    start_date_macd=start_date_macd - timedelta(days=1)
+                    df_macd=yf.download(tickerSymbol, start=start_date_macd, end=end_date)
+                    macd, macdsignal, macdhist = talib.MACD(df_macd['Close'], fastperiod=12, slowperiod=26, signalperiod=9)
+                    macd, macdsignal, macdhist= macd.dropna(), macdsignal.dropna(), macdhist.dropna()
+                if show_volume==True:
+                    count=count+1
+                if show_rsi==True and show_macd==True:
+                    additional=[fplt.make_addplot(rsi_data,color='#096cad', panel=count, ylabel="RSI"),
+                    fplt.make_addplot(macdhist,type='bar',width=0.7,panel=count+1, color='grey',alpha=1,secondary_y=False),
+                    fplt.make_addplot(macd,panel=count+1,color='#096cad',secondary_y=True),
+                    fplt.make_addplot(macdsignal,panel=count+1,color='orange',secondary_y=True),]
+                elif show_rsi==True:
+                    additional=[
+                        fplt.make_addplot(rsi_data,color='#096cad', panel=count, ylabel="RSI"),
+                    ]
+                    count=count+1
+                elif show_macd==True:
+                    additional=[
+                    fplt.make_addplot(macdhist,type='bar',width=0.7,panel=count, color='grey',alpha=1,secondary_y=False),
+                    fplt.make_addplot(macd,panel=count,color='#096cad',secondary_y=True),
+                    fplt.make_addplot(macdsignal,panel=count,color='orange',secondary_y=True),
+                    ]
 
                 fig, ax = fplt.plot(
                     data,
@@ -634,8 +698,8 @@ elif dashboard=='Screener':
                     type=chart_type,
                     show_nontrading=show_nontrading_days,
                     mav=(int(mav1),int(mav2),int(mav3)),
-                    volume=True,
-
+                    volume=show_volume,
+                    addplot=additional,
                     style=chart_style,
                     figsize=(15,10),
                 
@@ -643,10 +707,11 @@ elif dashboard=='Screener':
                     # https://github.com/matplotlib/mplfinance/blob/master/src/mplfinance/plotting.py
                     returnfig=True
                 )
+            
                 with chart:
                     st.write('_________________')
                     st.pyplot(fig)
-            fundamentals, data_show=st.columns([0.7,1])
+            fundamentals, blank, data_show=st.columns([0.35,0.02,1])
             #if show_data:
             with fundamentals:
                 st.markdown('---')
@@ -666,18 +731,20 @@ elif dashboard=='Screener':
                         </style>
 
                         <body>
-                        <center><p1 class='fundamenthead'> &nbsp $fundamentheader 's Fundamental Data  &nbsp</p1></center>
+                        <center><p1 class='fundamenthead'> &nbsp $fundamentheader 's Fundamentals  &nbsp</p1></center>
                         </body>
                         '''
-                compfundheader = Template(fundament_header).safe_substitute(fundamentheader=tickerSymbol)
-                st.markdown(compfundheader, unsafe_allow_html=True)
+                cofpltundheader = Template(fundament_header).safe_substitute(fundamentheader=tickerSymbol)
+                st.markdown(cofpltundheader, unsafe_allow_html=True)
                 # Set up scraper
                 url = ("https://finviz.com/quote.ashx?t=" + tickerSymbol.lower())
                 req = Request(url=url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:20.0) Gecko/20100101 Firefox/20.0'})
                 webpage = urlopen(req)
                 html = bs(webpage, "html.parser")
                 fundament=get_fundamentals()
-                st.dataframe(fundament)
+                st.table(fundament)
+            with blank:
+                st.write(' ')
             with data_show:
                 st.markdown('---')
                 dataheader='''
@@ -701,8 +768,178 @@ elif dashboard=='Screener':
                 compdataheader = Template(dataheader).safe_substitute(compdata=tickerSymbol)
                 st.markdown(compdataheader, unsafe_allow_html=True)
                 st.dataframe(tickerDf)
+                info = tickerData.info 
+                #fundInfo = {
+                #        'Enterprise Value (USD)': info['enterpriseValue'],
+                #        'Enterprise To Revenue Ratio': info['enterpriseToRevenue'],
+                #        'Enterprise To Ebitda Ratio': info['enterpriseToEbitda'],
+                #        'Net Income (USD)': info['netIncomeToCommon'],
+                #        'Profit Margin Ratio': info['profitMargins'],
+                #        'Forward PE Ratio': info['forwardPE'],
+                #        'PEG Ratio': info['pegRatio'],
+                #        'Price to Book Ratio': info['priceToBook'],
+                #        'Forward EPS (USD)': info['forwardEps'],
+                #        'Beta ': info['beta'],
+                #        'Book Value (USD)': info['bookValue'],
+                #        'Dividend Rate (%)': info['dividendRate'], 
+                #        'Dividend Yield (%)': info['dividendYield'],
+                #        'Five year Avg Dividend Yield (%)': info['fiveYearAvgDividendYield'],
+                #        'Payout Ratio': info['payoutRatio']
+                #    }
+                
+                #fundDF = pd.DataFrame.from_dict(fundInfo, orient='index')
+                #fundDF = fundDF.rename(columns={0: 'Value'})
+                #st.subheader('Fundamental Info') 
+                #st.table(fundDF)
+                #marketInfo = {
+                #        "Volume": info['volume'],
+                #        "Average Volume": info['averageVolume'],
+                #        "Market Cap": info["marketCap"],
+                #        "Float Shares": info['floatShares'],
+                #        "Regular Market Price (USD)": info['regularMarketPrice'],
+                #        'Bid Size': info['bidSize'],
+                #        'Ask Size': info['askSize'],
+                #        "Share Short": info['sharesShort'],
+                #        'Short Ratio': info['shortRatio'],
+                #        'Share Outstanding': info['sharesOutstanding']
+                #    }
+                
+                #marketDF = pd.DataFrame(data=marketInfo, index=[0])
+                #st.table(marketDF)
+                st.write('___________________________')
+                st.write('')
+                insiderheader='''
+                        <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
+                        <style>
+                            .insidehead {
+                            font-family:Montserrat;
+                            font-size:30px;
+                            font-weight:1000;
+                            font-style: bold;
+                            float:left;
+                            margin-left:0px;
+                            margin-top: 10px;
+                        }
+                        </style>
+
+                        <body>
+                        <center><p1 class='insidehead'> Recent trades made by company's officials </p1></center>
+                        </body>
+                        '''
+                st.markdown(insiderheader, unsafe_allow_html=True)
+                #st.subheader("\n\nRecent trades made by company's officials")
+                inside=get_insider()
+                st.dataframe(inside)
+                st.write('___________________________')
+                st.write('')
+                news=get_news()
+                insiderheader='''
+                        <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
+                        <style>
+                            .insidehead {
+                            font-family:Montserrat;
+                            font-size:30px;
+                            font-weight:1000;
+                            font-style: bold;
+                            float:left;
+                            margin-left:0px;
+                            margin-top: 10px;
+                        }
+                        </style>
+
+                        <body>
+                        <center><p1 class='insidehead'> Recent news on $insiderdata stock </p1></center>
+                        </body>
+                        '''
+                insiderdataheader = Template(insiderheader).safe_substitute(insiderdata=tickerSymbol)
+                st.markdown(insiderdataheader, unsafe_allow_html=True)
+                #st.dataframe(news, width=10000)
+                st.write(' ')
+                tickers = si.tickers_sp500()
+                recommendations = []
+                print(news)
+                for i in range(len(news)):
+                    headline=news['News Headline'][i]
+                    link=news['Article Link'][i]
+                    st.write(f"{headline}: [More on this article]({link})")
+                    newscount=newscount+1
+                    if newscount<15:
+                        st.write('____________________')
+                    if newscount==15:
+                        break
 
 if dashboard=='Backtesting':
     strategy='RSI'
     while strategy=='RSI':
         backtestrsi()
+if dashboard=='Twitter Analysis':
+    icon, dashboard, dashboard2=st.columns([1.0,0.7,0.7])
+    tweepytxt='''
+            <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
+            <style>
+            .tweepyhead {
+                font-family:Montserrat;
+                font-size:40px;
+                font-weight:1000;
+                font-style: bold;
+                float:left;
+                margin-left:60px;
+                margin-top: 20px;
+                margin-right: 20px;
+                        }
+            #twittericon {
+                margin-top: 20px;
+             }
+            </style>
+
+            <body>
+            <center><p1 class='tweepyhead'> Twitter Analysis</p1></center>
+            <svg xmlns="http://www.w3.org/2000/svg" width="55" height="55" fill="currentColor" class="bi bi-twitter" viewBox="0 0 16 16" id='twittericon'>
+            <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"/>
+            </svg>
+            </body>
+                        '''
+    with icon:
+        st.markdown(tweepytxt, unsafe_allow_html=True)
+    with dashboard:
+        option=st.selectbox(label='Select dashboard', options=['Twitter', 'Stocktwits'])
+    #client = tweepy.Client(bearer_token='AAAAAAAAAAAAAAAAAAAAAJ1meQEAAAAAMiu8HiZQp72esUQWDn6R2MwUHcg%3DUYSBVvz3CAGC0tNgCdq53QWQlnRyWaVx6kj8AR1671E8VIG0dX')
+    auth = tweepy.OAuthHandler('GoYcKuWHMDxBInUcaml8XrPrc', 'u9MEKZtN6MqZ0Q2Aq3r6Cg4RcMadTbBCVcIkwAdOJUytvK7tEY')
+    auth.set_access_token('1542799215813971974-5s4w5KiEI9dzcFdcSim0mDwMoTy6VF', '8c6Z5aBYl2uWLhcT150Pu9iOyhcagKddZbnFCdgRpRsgS')
+    api = tweepy.API(auth)
+    st.write(' ')
+    st.write(' ')
+    st.write(' ')
+    if option == 'Twitter':
+        with dashboard2:
+            usernames=[]
+            account=st.selectbox(label='Select a twitter account', options=['Traderstewie', 'The_chart_life', 'Tmltrader', 'Benzinga', 'Wallstreetjournal', 'Breakoutstocks', 'Stephanie_link', 'SunriseTrader'])
+            usernames.append(account)
+        for username in usernames:
+            print(username)
+            user = api.get_user(screen_name=username)
+            tweets = api.user_timeline(screen_name=username)
+            st.header(username)
+            st.image(user.profile_image_url)
+            
+            for tweet in tweets:
+                if '$' in tweet.text:
+                    words = tweet.text.split(' ')
+                    for word in words:
+                        if word.startswith('$') and word[1:].isalpha():
+                            symbol = word[1:]
+                            st.subheader(symbol)
+                            st.write(tweet.text)
+                            st.image(f"https://finviz.com/chart.ashx?t={symbol}")
+                            st.write('___________________________')
+    elif option=='Stocktwits':
+        with dashboard2:
+            symbol = st.text_input("Symbol", value='AAPL', max_chars=5)
+        r = requests.get(f"https://api.stocktwits.com/api/2/streams/symbol/{symbol}.json")
+        data=r.json()
+        for message in data['messages']:
+            st.image(message['user']['avatar_url'], width=40)
+            st.subheader(message['user']['username'])
+            st.write(message['created_at'])
+            st.subheader(message['body'])
+            st.write('_______________________')
