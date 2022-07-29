@@ -571,7 +571,7 @@ if dashboard=='Tradelyne':
         <style>
         .logo{
             width: 300px;
-            margin-top:-210px;
+            margin-top:-20px;
             margin-left:-30px;
         }
         </style>
