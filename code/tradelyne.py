@@ -533,16 +533,7 @@ def backtestbb(ticker, start, end, cash):
         st.write(' ')
         st.subheader(f"{ticker}'s total returns are {returns}% with a {annual_return}% APY")
     strategy=''
-page_bg_img = '''
-<style>
-body {
-background-image: url('https://cdn.myportfolio.com/fd40c2a8-1f6f-47d7-8997-48ba5415a69c/6c46ac13-6a18-427a-9baa-01ad3b53ac45_rw_600.png?h=21b14417887f0576feb32fcbfd191788');
-background-size: cover;
-}
-</style>
-<body>
-</body>
-'''
+
 st.markdown(page_bg_img, unsafe_allow_html=True)
 menu_data = [
     {'icon': "bi bi-window", 'label':"Screener"},
@@ -1137,30 +1128,7 @@ elif dashboard=='Screener':
             st.write(' ')
             st.write(' ')
             st.header("Stock News Sentiment Analyzer")
-            try:
-	        st.subheader("Hourly and Daily Sentiment of {} Stock".format(tickerSymbol))
-		news_table = news_headlines(tickerSymbol)
-		parsed_news_df = parse_news(news_table)
-		parsed_and_scored_news = score_news(parsed_news_df)
-		fig_hourly = plot_hourly_sentiment(parsed_and_scored_news, tickerSymbol)
-		fig_daily = plot_daily_sentiment(parsed_and_scored_news, tickerSymbol) 
-		graph1, graph2=st.columns(2)
-		with graph1:
-			st.plotly_chart(fig_hourly)
-		with graph2:
-			st.plotly_chart(fig_daily)
-
-		description = """
-                        The above chart averages the sentiment scores of {} stock hourly and daily.
-                        The table below gives each of the most recent headlines of the stock and the negative, neutral, positive and an aggregated sentiment score.
-                        Sentiments are given by the nltk.sentiment.vader Python library.
-                        """.format(tickerSymbol)
-                        
-		st.write(description)	 
-		st.table(parsed_and_scored_news)
-                    
-	    except:
-                st.write("Enter a correct stock ticker, e.g. 'AAPL' above and hit Enter.")	
+	    
 if dashboard=='Backtesting':
     backtest, blank, s1,s2,s3,s4, s5 =st.columns([2, 0.5, 0.75, 0.75, 0.75, 0.75, 0.75])
     with backtest:
