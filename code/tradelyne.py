@@ -632,7 +632,7 @@ if dashboard=='Tradelyne':
         width: 400px;
         position: relative;
         border-radius: 5%;
-        margin-left: 10px;
+        margin-left: 0px;
         }
         </style>
         <body>
