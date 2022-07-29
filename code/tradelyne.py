@@ -534,7 +534,6 @@ def backtestbb(ticker, start, end, cash):
         st.subheader(f"{ticker}'s total returns are {returns}% with a {annual_return}% APY")
     strategy=''
 
-st.markdown(page_bg_img, unsafe_allow_html=True)
 menu_data = [
     {'icon': "bi bi-window", 'label':"Screener"},
     {'icon': "bi bi-binoculars", 'label':"Technical Indicators"},
