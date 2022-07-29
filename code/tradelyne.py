@@ -636,7 +636,7 @@ if dashboard=='Tradelyne':
         }
         </style>
         <body>
-        <img src="https://cdn.myportfolio.com/fd40c2a8-1f6f-47d7-8997-48ba5415a69c/5422f547-b577-4c88-8d2d-be32f80ddb6e_rw_1200.png?h=d5f92fc4f63b8cace8a88e175fba4c09" alt="House" class='taimg'></img>
+        <center><img src="https://cdn.myportfolio.com/fd40c2a8-1f6f-47d7-8997-48ba5415a69c/5422f547-b577-4c88-8d2d-be32f80ddb6e_rw_1200.png?h=d5f92fc4f63b8cace8a88e175fba4c09" alt="House" class='taimg'></img> </center>
         </body>'''
     techtxt='''
         <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
