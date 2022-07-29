@@ -12,6 +12,7 @@ nltk
 urllib3
 bs4
 hydralit
+tweepy
 PyPortfolioOpt
 yahooquery
 gunicorn
