@@ -8,6 +8,7 @@ import pandas_datareader as pdr
 import mplfinance as fplt
 import backtrader as bt 
 import matplotlib.pyplot as plt
+import talib
 import matplotlib
 import requests
 import tweepy
@@ -15,56 +16,108 @@ import plotly.graph_objs as go
 from rsi import RSIStrategy
 from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup as bs
+from streamlit_option_menu import option_menu
 from string import Template
 from datetime import date, timedelta
 from yahoo_fin import stock_info as si 
-import requests
-import os
-import sys
-import subprocess
-
-# check if the library folder already exists, to avoid building everytime you load the pahe
-if not os.path.isdir("/tmp/ta-lib"):
-
-    # Download ta-lib to disk
-    with open("/tmp/ta-lib-0.4.0-src.tar.gz", "wb") as file:
-        response = requests.get(
-            "http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz"
-        )
-        file.write(response.content)
-    # get our current dir, to configure it back again. Just house keeping
-    default_cwd = os.getcwd()
-    os.chdir("/tmp")
-    # untar
-    os.system("tar -zxvf ta-lib-0.4.0-src.tar.gz")
-    os.chdir("/tmp/ta-lib")
-    os.system("ls -la /app/equity/")
-    # build
-    os.system("./configure --prefix=/home/appuser")
-    os.system("make")
-    # install
-    os.system("make install")
-    # back to the cwd
-    os.chdir(default_cwd)
-    sys.stdout.flush()
-
-# add the library to our current environment
-from ctypes import *
-
-lib = CDLL("/home/appuser/lib/libta_lib.so.0.0.0")
-# import library
-try:
-    import talib
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "--global-option=build_ext", "--global-option=-L/home/appuser/lib/", "--global-option=-I/home/appuser/include/", "ta-lib"])
-finally:
-    import talib
+from pandas_datareader import data as pdr
+from pypfopt.discrete_allocation import DiscreteAllocation, get_latest_prices
+from pypfopt import EfficientFrontier
+from pypfopt import risk_models
+from pypfopt import expected_returns
+from pypfopt import plotting
+from pypfopt import objective_functions
+import plotly.express as px
+import copy
+from datetime import datetime
+from io import BytesIO
+from yahooquery import Screener
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from bollingerband import BOLLStrat
 st.set_page_config(page_title='Tradelyne', layout="wide",initial_sidebar_state='collapsed')
 today=date.today()
 oneyr= today - timedelta(days=365)
 count=1
 newscount=0
 additional=[]
+def news_headlines(ticker):
+    url = finviz_url + ticker
+    req = Request(url=url,headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:20.0) Gecko/20100101 Firefox/20.0'}) 
+    response = urlopen(req)    
+    # Read the contents of the file into 'html'
+    html = bs(response)
+    # Find 'news-table' in the Soup and load it into 'news_table'
+    news_table = html.find(id='news-table')
+    return news_table
+	
+# parse news into dataframe
+def parse_news(news_table):
+    parsed_news = []
+    
+    for x in news_table.findAll('tr'):
+        # read the text from each tr tag into text
+        # get text from a only
+        text = x.a.get_text() 
+        # splite text in the td tag into a list 
+        date_scrape = x.td.text.split()
+        # if the length of 'date_scrape' is 1, load 'time' as the only element
+
+        if len(date_scrape) == 1:
+            time = date_scrape[0]
+            
+        # else load 'date' as the 1st element and 'time' as the second    
+        else:
+            date = date_scrape[0]
+            time = date_scrape[1]
+        
+        # Append ticker, date, time and headline as a list to the 'parsed_news' list
+        parsed_news.append([date, time, text])        
+        # Set column names
+        columns = ['date', 'time', 'headline']
+        # Convert the parsed_news list into a DataFrame called 'parsed_and_scored_news'
+        parsed_news_df = pd.DataFrame(parsed_news, columns=columns)        
+        # Create a pandas datetime object from the strings in 'date' and 'time' column
+        parsed_news_df['datetime'] = pd.to_datetime(parsed_news_df['date'] + ' ' + parsed_news_df['time'])
+        
+    return parsed_news_df
+        
+def score_news(parsed_news_df):
+    # Instantiate the sentiment intensity analyzer
+    vader = SentimentIntensityAnalyzer()
+    
+    # Iterate through the headlines and get the polarity scores using vader
+    scores = parsed_news_df['headline'].apply(vader.polarity_scores).tolist()
+
+    # Convert the 'scores' list of dicts into a DataFrame
+    scores_df = pd.DataFrame(scores)
+
+    # Join the DataFrames of the news and the list of dicts
+    parsed_and_scored_news = parsed_news_df.join(scores_df, rsuffix='_right')             
+    parsed_and_scored_news = parsed_and_scored_news.set_index('datetime')    
+    parsed_and_scored_news = parsed_and_scored_news.drop(['date', 'time'], 1)          
+    parsed_and_scored_news = parsed_and_scored_news.rename(columns={"compound": "sentiment_score"})
+
+    return parsed_and_scored_news
+
+def plot_hourly_sentiment(parsed_and_scored_news, ticker):
+   
+    # Group by date and ticker columns from scored_news and calculate the mean
+    mean_scores = parsed_and_scored_news.resample('H').mean()
+
+    # Plot a bar chart with plotly
+    fig = px.bar(mean_scores, x=mean_scores.index, y='sentiment_score', title = ticker + ' Hourly Sentiment Scores')
+    return fig # instead of using fig.show(), we return fig and turn it into a graphjson object for displaying in web page later
+
+def plot_daily_sentiment(parsed_and_scored_news, ticker):
+   
+    # Group by date and ticker columns from scored_news and calculate the mean
+    mean_scores = parsed_and_scored_news.resample('D').mean()
+
+    # Plot a bar chart with plotly
+    fig = px.bar(mean_scores, x=mean_scores.index, y='sentiment_score', title = ticker + ' Daily Sentiment Scores')
+    return fig # instead of using fig.show(), we return fig and turn it into a graphjson object for displaying in web page later
+
+
 def get_fundamentals():
     try:
         # Find fundamentals table
@@ -92,7 +145,6 @@ def get_fundamentals():
 
     except Exception as e:
         return e
-    
 def get_news():
     try:
         # Find news table
@@ -124,17 +176,8 @@ def get_insider():
 
     except Exception as e:
         return e
-def backtestrsi():
+def backtestrsi(ticker, start, end, cash):
     global strategy
-    s1,s2,s3,s4=st.columns(4)
-    with s1:
-        ticker=st.text_input("Stock ticker", value="AAPL")
-    with s2:
-        start=st.text_input("Start date", value="2018-01-31")
-    with s3:
-        end=st.text_input("End date", value=date.today())
-    with s4:
-        cash=st.text_input("Starting cash", value=10000)
     cash=int(cash)
     cerebro=bt.Cerebro()
     cerebro.broker.set_cash(cash)
@@ -153,7 +196,6 @@ def backtestrsi():
     matplotlib.use('Agg')
     plt.show(block=False)
     cerebro.adddata(data)
-
     cerebro.addstrategy(RSIStrategy)
     cerebro.addanalyzer(bt.analyzers.PyFolio ,_name='pf')
     cerebro.addanalyzer(bt.analyzers.PeriodStats, _name='cm')
@@ -180,11 +222,16 @@ def backtestrsi():
     returns=str(round(returns, 2))
     annual_return=str(round(annual_return,2))
     figure = cerebro.plot(style='line')[0][0]
-    graph, info=st.columns([2,1])
+    graph, blank, info=st.columns([2,0.2, 1])
     print(stratdd[0].analyzers.dd.get_analysis())
     with graph:
         st.pyplot(figure)
+    with blank: 
+        st.write(' ')
     with info:
+        st.header(strategy)
+        st.write(' ')
+        st.write(' ')
         trade=stratdd[0].analyzers.ta.get_analysis()
         tra=''
         trade=stratdd[0].analyzers.ta.get_analysis()
@@ -208,7 +255,7 @@ def backtestrsi():
                     {'range': [start_value, final_value], 'color': 'royalblue'}],}
             ))
             fig.update_layout(paper_bgcolor = "white", font = {'color': "black", 'family': "Arial"}, width=500, height=500,)
-            st.plotly_chart(fig, width=5)
+            #st.plotly_chart(fig, width=5)
         else:
             fig = go.Figure(go.Indicator(
             mode = "gauge+number+delta",
@@ -223,8 +270,7 @@ def backtestrsi():
                     {'range': [final_value, start_value], 'color': '#D3D3D3'}],}
             ))
             fig.update_layout(paper_bgcolor = "white", font = {'color': "black", 'family': "Arial"}, width=500, height=500)
-            st.image(fig)
-            st.plotly_chart(fig)
+            #st.plotly_chart(fig)
         #st.subheader('Total returns: ', f"{returns}")
         #st.subheader('Annual returns: ', f"{annual_return}")
         st.subheader(f"{ticker}'s total returns are {returns}% with a {annual_return}% APY")
@@ -267,8 +313,188 @@ def backtestrsi():
     st.write(stratdd[0].analyzers.sr.get_analysis())
     #st.write(stats)
     strategy=''
+def volatility(ticker, start, end, cash):
+    global strategy
+    import os
+    from VIXStrategy import VIXStrategy
+    cash=int(cash)
+    cerebro = bt.Cerebro()
+    cerebro.broker.setcash(cash)
+    start_value=cash
+    class SPYVIXData(bt.feeds.GenericCSVData):
+        lines = ('vixopen', 'vixhigh', 'vixlow', 'vixclose',)
 
+        params = (
+            ('dtformat', '%Y-%m-%d'),#'dtformat', '%Y-%m-%d'),
+            ('date', 0),
+            ('spyopen', 1),
+            ('spyhigh', 2),
+            ('spylow', 3),
+            ('spyclose', 4),
+            ('spyadjclose', 5),
+            ('spyvolume', 6),
+            ('vixopen', 7),
+            ('vixhigh', 8),
+            ('vixlow', 9),
+            ('vixclose', 10)
+        )
 
+    class VIXData(bt.feeds.GenericCSVData):
+            params = (
+            ('dtformat', '%Y-%m-%d'),
+            ('date', 0),
+            ('vixopen', 1),
+            ('vixhigh', 2),
+            ('vixlow', 3),
+            ('vixclose', 4),
+            ('volume', -1),
+            ('openinterest', -1)
+        )
+    df = yf.download(tickers=ticker, start=start, end=end, rounding= False)
+    ticker=ticker
+    df=df.reset_index() 
+    df2 = yf.download(tickers='^VIX', start=start, end=end, rounding= False)
+    df2.rename(columns = {'Open':'Vix Open', 'High':'Vix High', 'Low':'Vix Low', 'Close':'Vix Close'}, inplace = True)
+    df2=df2.drop("Volume", axis=1)
+    df2=df2.drop("Adj Close", axis=1)
+    df2=df2.reset_index()
+    df3=df2
+    df3.to_csv(r'https://github.com/Utkarshhh20/trial/blob/main/trial.csv')
+    df2=df2.drop("Date", axis=1)
+    result=pd.concat([df, df2], axis=1, join='inner')
+    result.to_csv(r'C:\Users\Utki\Desktop\code\stock\trial2.csv')
+    result = pd.read_csv('trial2.csv')
+    # If you know the name of the column skip this
+    first_column = result.columns[0]
+    # Delete first
+    result = result.drop([first_column], axis=1)
+    result.to_csv('trial2.csv', index=False)
+    # If you know the name of the column skip this
+    first_column = df3.columns[0]
+    # Delete first
+    df3.to_csv('trial.csv', index=False)
+    print(result)
+    print(df3)
+    st.dataframe(result)
+    st.dataframe(df3)
+    csv_file = os.path.dirname(os.path.realpath(__file__)) + "/trial2.csv"
+    vix_csv_file = os.path.dirname(os.path.realpath(__file__)) + "/trial.csv"
+
+    spyVixDataFeed = SPYVIXData(dataname=csv_file)
+    vixDataFeed = VIXData(dataname=vix_csv_file)
+    start=start.split("-")
+    end=end.split("-")
+    for i in range(len(start)):
+        start[i]=int(start[i])
+    for j in range(len(end)):
+        end[j]=int(end[j])
+    year=end[0]-start[0]
+    month=end[1]-start[1]
+    day=end[2]-start[2]
+    totalyear=year+(month/12)+(day/365)
+    matplotlib.use('Agg')
+    cerebro.adddata(spyVixDataFeed)
+    cerebro.adddata(vixDataFeed)
+
+    cerebro.addstrategy(VIXStrategy)
+
+    cerebro.run()
+    print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
+    print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
+
+    final_value=cerebro.broker.getvalue()
+    returns=(final_value-start_value)*100/start_value
+    annual_return=returns/totalyear
+    returns=round(returns, 2)
+    annual_return=round(annual_return,2)
+    returns=str(returns)
+    annual_return=str(annual_return)
+    figure = cerebro.plot(volume=False)[0][0]
+    graph, blank, info = st.columns([2,0.2,1])
+    with graph:
+        st.pyplot(figure)
+    with blank:
+        st.write(' ')
+    with info:
+        st.header(strategy)
+        st.write(' ')
+        st.write(' ')
+        st.subheader(f"{ticker}'s total returns are {returns}% with a {annual_return}% APY")
+    strategy=''
+
+def backtestgolden(ticker, start, end, cash):
+    global strategy
+    cash=int(cash)
+    cerebro=bt.Cerebro()
+    cerebro.broker.set_cash(cash)
+    start_value=cash
+    data = bt.feeds.PandasData(dataname=yf.download(ticker, start, end))
+    start=start.split("-")
+    end=end.split("-")
+    for i in range(len(start)):
+        start[i]=int(start[i])
+    for j in range(len(end)):
+        end[j]=int(end[j])
+    year=end[0]-start[0]
+    month=end[1]-start[1]
+    day=end[2]-start[2]
+    totalyear=year+(month/12)+(day/365)
+    matplotlib.use('Agg')
+    cerebro.adddata(data)
+
+    cerebro.addstrategy(goldencrossover)
+
+    print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
+
+    cerebro.run()
+
+    print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
+
+    final_value=cerebro.broker.getvalue()
+    returns=(final_value-start_value)*100/start_value
+    annual_return=returns/totalyear
+    returns=round(returns, 2)
+    annual_return=round(annual_return,2)
+    returns=str(returns)
+    annual_return=str(annual_return)
+    figure = cerebro.plot()[0][0]
+    graph, blank, info = st.columns([2,0.2,1])
+    with graph:
+        st.pyplot(figure)
+    with blank:
+        st.write(' ')
+    with info:
+        st.header(strategy)
+        st.write(' ')
+        st.write(' ')
+        st.subheader(f"{ticker}'s total returns are {returns}% with a {annual_return}% APY")
+    strategy=''
+def backtestbb(ticker, start, end, cash):
+    global strategy
+    cash=int(cash)
+    cerebro=bt.Cerebro()
+    cerebro.broker.set_cash(cash)
+    start_value=cash
+    data = bt.feeds.PandasData(dataname=yf.download(ticker, start, end))
+    matplotlib.use('Agg')
+    plt.show(block=False)
+    cerebro.adddata(data)
+    cerebro.addstrategy(BOLLStrat)
+    print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
+    cerebro.run()
+    print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
+    figure = cerebro.plot(style='line')[0][0]
+    graph, blank, info = st.columns([2,0.2,1])
+    with graph:
+        st.pyplot(figure)
+    with blank:
+        st.write(' ')
+    with info:
+        st.header(strategy)
+        st.write(' ')
+        st.write(' ')
+        st.subheader(f"{ticker}'s total returns are {returns}% with a {annual_return}% APY")
+    strategy=''
 page_bg_img = '''
 <style>
 body {
@@ -315,8 +541,8 @@ if dashboard=='Tradelyne':
     logo='''
         <style>
         .logo{
-            width: 350px;
-            margin-top:-30px;
+            width: 300px;
+            margin-top:-210px;
             margin-left:-30px;
         }
         </style>
@@ -534,9 +760,6 @@ if dashboard=='Tradelyne':
         st.write('____________________')
 
 elif dashboard=='Screener':
-    st.write(' ')
-    st.write(' ')
-    st.write(' ')
     screen, start, end, stock=st.columns([1,0.7,0.7,0.7])
     screener='''
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
@@ -907,11 +1130,278 @@ elif dashboard=='Screener':
                         st.write('____________________')
                     if newscount==15:
                         break
+            # for extracting data from finviz
+            finviz_url = 'https://finviz.com/quote.ashx?t='
+            st.write(' ')
+            st.write(' ')
+            st.write(' ')
+            st.header("Stock News Sentiment Analyzer")
 
+            try:
+                    st.subheader("Hourly and Daily Sentiment of {} Stock".format(tickerSymbol))
+                    news_table = news_headlines(tickerSymbol)
+                    parsed_news_df = parse_news(news_table)
+                    parsed_and_scored_news = score_news(parsed_news_df)
+                    fig_hourly = plot_hourly_sentiment(parsed_and_scored_news, tickerSymbol)
+                    fig_daily = plot_daily_sentiment(parsed_and_scored_news, tickerSymbol) 
+                    graph1, graph2=st.columns(2)
+                    with graph1:
+                        st.plotly_chart(fig_hourly)
+                    with graph2:
+                        st.plotly_chart(fig_daily)
+
+                    description = """
+                        The above chart averages the sentiment scores of {} stock hourly and daily.
+                        The table below gives each of the most recent headlines of the stock and the negative, neutral, positive and an aggregated sentiment score.
+                        Sentiments are given by the nltk.sentiment.vader Python library.
+                        """.format(tickerSymbol)
+                        
+                    st.write(description)	 
+                    st.table(parsed_and_scored_news)
+                    
+            except:
+                    st.write("Enter a correct stock ticker, e.g. 'AAPL' above and hit Enter.")	
 if dashboard=='Backtesting':
-    strategy='RSI'
+    backtest, blank, s1,s2,s3,s4, s5 =st.columns([2, 0.5, 0.75, 0.75, 0.75, 0.75, 0.75])
+    with backtest:
+        backtest_head='''
+            <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
+            <style>
+            .backtesthead {
+                font-family:Montserrat;
+                font-size:40px;
+                font-weight:1000;
+                font-style: bold;
+                float:left;
+                margin-left:60px;
+                margin-top: 20px;
+                margin-right: 20px;
+                        }
+            #backtesticon {
+                margin-top: 20px;
+             }
+            </style>
+
+            <body>
+            <center><p1 class='backtesthead'> Backtesting</p1></center>
+            <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" fill="currentColor" class="bi bi-bar-chart-fill" viewBox="0 0 16 16" id='backtesticon'>
+            <path d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V2z"/>
+            </svg>
+            </body>
+                        '''
+        st.markdown(backtest_head, unsafe_allow_html=True)
+    with blank:
+        st.write(' ')
+    with s1:
+        ticker=st.text_input("Stock ticker", value="AAPL")
+    with s2:
+        start=st.text_input("Start date", value="2018-01-31")
+    with s3:
+        end=st.text_input("End date", value=date.today())
+    with s4:
+        cash=st.text_input("Starting cash", value=10000)
+    with s5:
+        strategy=st.selectbox('Choose your strategy', options=['RSI', 'Volatility VIX', 'Golden Crossover', 'Bollinger Bands'])
+    st.write(' ')
+    st.write(' ')
+    st.write(' ')
     while strategy=='RSI':
-        backtestrsi()
+        backtestrsi(ticker=ticker, start=start, end=end, cash=cash)
+    while strategy=='Volatility VIX':
+        volatility(ticker=ticker, start=start, end=end, cash=cash)
+    while strategy=='Golden Crossover':
+        backtestgolden(ticker=ticker, start=start, end=end, cash=cash)
+    while strategy=='Bollinger Bands':
+        backtestbb(ticker=ticker, start=start, end=end, cash=cash)
+if dashboard=='Portfolio Optimizer':
+    #st.set_page_config(page_title = "Bohmian's Stock Portfolio Optimizer", layout = "wide")
+    s = Screener()
+    tickers_strings = ''
+    count=0
+    sectordict={}
+    sectornames=['Individual Stocks', 'Technology', 'Utilities', 'Real Estate', 'Healthcare', 'Energy', 'Industrials', 'Materials', 'Communication Services', 'Financial Services', 'Consumer Defensive', 'Cryptocurrency']
+    sectors=['ms_technology', 'ms_utilities', 'ms_real_estate', 'ms_healthcare', 'ms_energy', 'ms_industrials', 'ms_basic_materials', 'ms_communication_services','ms_financial_services','ms_consumer_defensive', 'all_cryptocurrencies_us',]
+    portfolioinp=['Individual Stocks','ms_technology', 'ms_utilities', 'ms_real_estate', 'ms_healthcare', 'ms_energy', 'ms_industrials', 'ms_basic_materials', 'ms_communication_services','ms_financial_services','ms_consumer_defensive', 'all_cryptocurrencies_us']
+    for i in range(len(sectornames)):
+        sectordict[sectornames[i]]=portfolioinp[i]
+
+    yf.pdr_override()
+    def plot_cum_returns(data, title):    
+        daily_cum_returns = 1 + data.dropna().pct_change()
+        daily_cum_returns = daily_cum_returns.cumprod()*100
+        fig = px.line(daily_cum_returns, title=title)
+        return fig
+        
+    def plot_efficient_frontier_and_max_sharpe(mu, S): 
+        # Optimize portfolio for max Sharpe ratio and plot it out with efficient frontier curve
+        ef = EfficientFrontier(mu, S)
+        fig, ax = plt.subplots(figsize=(6,4))
+        ef_max_sharpe = copy.deepcopy(ef)
+        plotting.plot_efficient_frontier(ef, ax=ax, show_assets=False)
+        # Find the max sharpe portfolio
+        ef_max_sharpe.max_sharpe(risk_free_rate=0.02)
+        ret_tangent, std_tangent, _ = ef_max_sharpe.portfolio_performance()
+        ax.scatter(std_tangent, ret_tangent, marker="*", s=100, c="r", label="Max Sharpe")
+        # Generate random portfolios
+        n_samples = 1000
+        w = np.random.dirichlet(np.ones(ef.n_assets), n_samples)
+        rets = w.dot(ef.expected_returns)
+        stds = np.sqrt(np.diag(w @ ef.cov_matrix @ w.T))
+        sharpes = rets / stds
+        ax.scatter(stds, rets, marker=".", c=sharpes, cmap="viridis_r")
+        # Output
+        ax.legend()
+        return fig
+
+
+    st.header("Mean-variance Stock Portfolio Optimizer")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        start_date = st.date_input("Start Date",datetime(2015, 1, 1))
+        
+    with col2:
+        end_date = st.date_input("End Date") # it defaults to current date
+    with col3:
+        sectorinp=st.selectbox(label='Select a sector', options=sectornames, index=0)
+    data = s.get_screeners(sectors,  count=15)
+    for i in sectors:
+        if i==sectordict[sectorinp]:
+            df=pd.DataFrame(data[i]['quotes'])
+            tickers=df['symbol']
+            for j in tickers:
+                if count!=0:
+                    tickers_strings = tickers_strings+','+j
+                else:
+                    tickers_strings = tickers_strings+j
+                count=count+1
+        else:
+            pass
+    if sectorinp=='Individual Stocks':
+        tickers_string = st.text_input('Enter all stock tickers to be included in portfolio separated by commas \
+                                    WITHOUT spaces, e.g. "MA,FB,V,AMZN,JPM,BA"', '').upper()
+    else:
+        tickers_string = st.text_input('Enter all stock tickers to be included in portfolio separated by commas \
+                                    WITHOUT spaces, e.g. "MA,FB,V,AMZN,JPM,BA"', value=tickers_strings).upper()
+    tickers = tickers_string.split(',')
+    try:
+        # Get Stock Prices using pandas_datareader Library	
+        stocks_df = pdr.get_data_yahoo(tickers, start = start_date, end = end_date)['Adj Close']
+        sp500=pdr.get_data_yahoo('SPY', start = start_date, end = end_date)['Adj Close']
+            # Plot Individual Stock Prices
+        fig_price = px.line(stocks_df, title='')
+            # Plot Individual Cumulative Returns
+        fig_cum_returns = plot_cum_returns(stocks_df, '')
+            # Calculatge and Plot Correlation Matrix between Stocks
+        corr_df = stocks_df.corr().round(2)
+        fig_corr = px.imshow(corr_df, text_auto=True)
+            # Calculate expected returns and sample covariance matrix for portfolio optimization later
+        mu = expected_returns.mean_historical_return(stocks_df)
+        S = risk_models.sample_cov(stocks_df)
+            
+            # Plot efficient frontier curve
+        fig = plot_efficient_frontier_and_max_sharpe(mu, S)
+        fig_efficient_frontier = BytesIO()
+        fig.savefig(fig_efficient_frontier, format="png")
+            
+            # Get optimized weights
+        ef = EfficientFrontier(mu, S)
+        ef.add_objective(objective_functions.L2_reg, gamma=0.1)
+        ef.max_sharpe(risk_free_rate=0.02)
+        weights = ef.clean_weights()
+        expected_annual_return, annual_volatility, sharpe_ratio = ef.portfolio_performance()
+        weights_df = pd.DataFrame.from_dict(weights, orient = 'index')
+        weights_df.columns = ['weights']  
+            # Calculate returns of portfolio with optimized weights
+        stocks_df['Optimized Portfolio'] = 0
+        for ticker, weight in weights.items():
+                stocks_df['Optimized Portfolio'] += stocks_df[ticker]*weight
+            
+            # Plot Cumulative Returns of Optimized Portfolio
+        fig_cum_returns_optimized = plot_cum_returns(stocks_df['Optimized Portfolio'], 'Cumulative Returns of Optimized Portfolio Starting with $100')
+        latest_prices = get_latest_prices(stocks_df)
+        da = DiscreteAllocation(weights, latest_prices, total_portfolio_value=100000)
+        allocation, leftover = da.greedy_portfolio()
+        print(allocation, leftover)
+                # Display everything on Streamlit
+        st.subheader("Your Portfolio Consists of: {} Stocks".format(tickers_string))
+        col1,col2=st.columns([1.3,1])
+        with col1:
+            st.plotly_chart(fig_cum_returns_optimized, use_container_width=True)
+        with col2:
+            st.write('')	
+            st.write('')	
+            st.subheader('\tStock Prices')
+            st.write(stocks_df)
+        st.write('___________________________')
+        col1,col2, stats=st.columns([0.5,1.3, 0.7])   
+        with col1: 
+            st.write('')
+            st.write('')
+            st.write('')
+            st.subheader("Max Sharpe Portfolio Weights")
+            st.dataframe(weights_df)
+        with col2:
+            st.write('')
+            st.write('')
+            stock_tickers=[]
+            weightage=[]
+            for i in weights:
+                if weights[i]!=0:
+                    stock_tickers.append(i)
+                    weightage.append(weights[i])
+            fig_pie = go.Figure(
+                go.Pie(
+                labels =stock_tickers,
+                values = weightage,
+                hoverinfo = "label+percent",
+                textinfo = "value"
+                ))
+            holdings='''
+            <style>
+            .holding{
+                float: center;
+                font-weight: 600;
+                font-size: 35px;
+                font-family: arial;
+            }
+            </style>
+            <body>
+            <center><p1 class='holding'> Optimized Portfolio Holdings </p1></center>
+            </body>
+            '''
+            st.markdown(holdings, unsafe_allow_html=True)
+            st.plotly_chart(fig_pie)
+        with stats:
+            st.subheader('Expected annual return: {}%'.format((expected_annual_return*100).round(2)))
+            st.write('___________')
+            st.subheader('Annual volatility: {}%'.format((annual_volatility*100).round(2)))
+            st.write('___________')
+            st.subheader('Sharpe Ratio: {}'.format(sharpe_ratio.round(2)))
+            st.write('___________')
+            st.subheader('''Discrete allocation: 
+            {}'''.format(allocation))
+            st.write('___________')
+            st.subheader("Funds remaining: ${:.2f}".format(leftover))
+        st.write('___________________________')
+        col1, col2=st.columns(2)
+        with col1:
+            st.subheader("Optimized Max Sharpe Portfolio Performance")
+            st.image(fig_efficient_frontier)
+        with col2:
+            st.subheader("Correlation between stocks")
+            st.plotly_chart(fig_corr) # fig_corr is not a plotly chart
+        col1,col2=st.columns(2)
+        with col1:
+            st.subheader('Price of Individual Stocks')
+            st.plotly_chart(fig_price)
+        with col2:
+            st.subheader('Cumulative Returns of Stocks Starting with $100')
+            st.plotly_chart(fig_cum_returns)	
+    except:
+        st.write('Enter correct stock tickers to be included in portfolio separated\
+        by commas WITHOUT spaces, e.g. "MA,FB,V,AMZN,JPM,BA"and hit Enter.')
 if dashboard=='Twitter Analysis':
     icon, dashboard, dashboard2=st.columns([1.0,0.7,0.7])
     tweepytxt='''
