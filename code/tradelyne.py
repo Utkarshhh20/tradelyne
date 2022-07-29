@@ -1,5 +1,4 @@
 import streamlit as st
-nltk.download("vader_lexicon")
 import hydralit_components as hc
 import datetime
 import pandas as pd 
@@ -31,6 +30,8 @@ import copy
 from datetime import datetime
 from io import BytesIO
 from yahooquery import Screener
+import nltk
+nltk.download("vader_lexicon")
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from bollingerband import BOLLStrat
 import os
