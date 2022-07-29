@@ -570,7 +570,7 @@ if dashboard=='Tradelyne':
     logo='''
         <style>
         .logo{
-            width: 300px;
+            width: 370px;
             margin-top:-20px;
             margin-left:-30px;
         }
@@ -790,6 +790,8 @@ if dashboard=='Tradelyne':
 
 elif dashboard=='Screener':
     screen, start, end, stock=st.columns([1,0.7,0.7,0.7])
+    st.write(' ')
+    st.write(' ')	
     screener='''
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
     <style>
