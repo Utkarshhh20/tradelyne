@@ -75,6 +75,7 @@ except ImportError:
 finally:
     import talib
 st.set_page_config(page_title='Tradelyne', layout="wide",initial_sidebar_state='collapsed')
+st.write('<style>div.block-container{padding-left:0rem;}</style>', unsafe_allow_html=True)
 st.markdown(
         f""" <style>
         .reportview-container .main .block-container{{
