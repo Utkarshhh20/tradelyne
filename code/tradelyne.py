@@ -76,6 +76,12 @@ finally:
     import talib
 st.set_page_config(page_title='Tradelyne', layout="wide",initial_sidebar_state='collapsed')
 st.markdown(""" <style> 
+		.appview-container .main .block-container {
+			        padding-top: 0rem;
+    				padding-right: 3rem;
+    				padding-left: 0rem;
+    				padding-bottom: 0rem;
+				}
                 .css-18e3th9 {  padding-top: 0rem; 
                                 padding-bottom: 5rem; 
                                 padding-left: 0rem; 
@@ -84,8 +90,6 @@ st.markdown(""" <style>
                                 padding-right: 1rem; 
                                 padding-bottom: 3.5rem; 
                                 padding-left: 0rem; } 
-		.appview-container .main .block-container {
-	    			padding-left: 0rem;}
                 </style> """, 
                 unsafe_allow_html=True)
 
