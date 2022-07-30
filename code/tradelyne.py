@@ -84,11 +84,11 @@ st.markdown(""" <style>
                                 padding-right: 1rem; 
                                 padding-bottom: 3.5rem; 
                                 padding-left: 1rem; } 
+		.appview-container .main .block-container {
+	    			padding-left: 0rem;}
                 </style> """, 
                 unsafe_allow_html=True)
-.appview-container .main .block-container {
-	    padding-left: 0rem;
-}
+
 today=date.today()
 oneyr= today - timedelta(days=365)
 count=1
