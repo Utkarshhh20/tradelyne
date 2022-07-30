@@ -809,7 +809,7 @@ elif dashboard=='Screener':
     st.write(' ')
     st.write(' ')
     st.write(' ')	
-    screen, start, end, stock=st.columns([1,0.7,0.7,0.7])	
+    screen, start, end, stock=st.columns([0.7,0.7,0.7,0.7])	
     screener='''
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
     <style>
