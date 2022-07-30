@@ -818,7 +818,6 @@ elif dashboard=='Screener':
         font-size:40px;
         font-weight:1000;
         font-style: bold;
-        float:left;
         margin-left:0px;
         margin-top: 35px;
     }
