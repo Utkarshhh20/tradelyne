@@ -819,13 +819,13 @@ elif dashboard=='Screener':
         font-weight:1000;
         font-style: bold;
         float:left;
-        margin-left:80px;
+        margin-left:0px;
         margin-top: 35px;
     }
     </style>
 
     <body>
-    <p1 class='screener'>SCREENER</p1>
+    <center><p1 class='screener'>SCREENER</p1></center>
     </body>
     '''
     with screen:
