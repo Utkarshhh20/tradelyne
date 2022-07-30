@@ -77,7 +77,7 @@ finally:
 st.set_page_config(page_title='Tradelyne', layout="wide",initial_sidebar_state='collapsed')
 reduce_header_height_style = """
     <style>
-        div.block-container {padding-left:0rem;}
+        .block-container.css-18e3th9.egzxvld2 {padding-left:0rem;}
     </style>
 """
 st.markdown(reduce_header_height_style, unsafe_allow_html=True)
