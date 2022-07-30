@@ -75,13 +75,8 @@ except ImportError:
 finally:
     import talib
 st.set_page_config(page_title='Tradelyne', layout="wide",initial_sidebar_state='collapsed')
-reduce_header_height_style = """
-    <style>
-        .block-container.css-18e3th9.egzxvld2 {padding-left:0rem;}
-    </style>
-"""
-st.markdown(reduce_header_height_style, unsafe_allow_html=True)
-st.markdown("""
+st.markdown('<style>div.block-container{padding-top:2rem;}</style>', unsafe_allow_html=True)
+'''st.markdown("""
         <style>
                .css-18e3th9 {
                     padding-top: 0rem;
@@ -96,7 +91,7 @@ st.markdown("""
                     padding-left: 1rem;
                 }
         </style>
-        """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)'''
 
 today=date.today()
 oneyr= today - timedelta(days=365)
