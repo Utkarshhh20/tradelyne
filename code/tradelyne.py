@@ -1380,7 +1380,7 @@ if dashboard=='Backtesting':
     with s4:
         cash=st.text_input("Starting cash", value=10000, key='back')
     with s5:
-        strategy=st.selectbox('Choose your strategy', options=['RSI', 'Volatility VIX', 'Golden Crossover', 'Bollinger Bands'])
+        strategy=st.selectbox('Choose your strategy', options=['RSI', 'Golden Crossover', 'Bollinger Bands'])
     st.write(' ')
     st.write(' ')
     st.write(' ')
