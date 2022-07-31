@@ -1582,7 +1582,7 @@ if dashboard=='Portfolio Optimizer':
         col1,col2=st.columns(2)
         with col1:
             st.subheader('Price of Individual Stocks')
-            st.plotly_chart(fig_price)
+            st.plotly_chart(fig_price, width=100)
         with col2:
             st.subheader('Cumulative Returns of Stocks Starting with $100')
             st.plotly_chart(fig_cum_returns)	
