@@ -1590,7 +1590,6 @@ if dashboard=='Portfolio Optimizer':
         st.write('Enter correct stock tickers to be included in portfolio separated\
         by commas WITHOUT spaces, e.g. "MA,FB,V,AMZN,JPM,BA"and hit Enter.')
 if dashboard=='Twitter Analysis':
-    tweets=[]	
     st.write(' ')
     st.write(' ')
     st.write(' ')
@@ -1634,7 +1633,7 @@ if dashboard=='Twitter Analysis':
     if option == 'Twitter':
         with dashboard2:
             usernames=[]
-            account=st.selectbox(label='Select a twitter account', options=['Traderstewie', 'The_chart_life', 'Tmltrader', 'Benzinga', 'Breakoutstocks', 'Stephanie_link', 'SunriseTrader'])
+            account=st.selectbox(label='Select a twitter account', options=['Traderstewie', 'The_chart_life', 'Tmltrader', 'Benzinga', 'Breakoutstocks', 'Stephanie_link', 'SunriseTrader'], 2)
             usernames.append(account)
         for username in usernames:
             user = api.get_user(screen_name=username)
