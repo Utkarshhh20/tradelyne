@@ -825,7 +825,7 @@ elif dashboard=='Fundamental Indicators':
     </style>
 
     <body>
-    <center><p1 class='screener'>FUNDAMENTAL INDICATORS</p1></center>
+    <center><p1 class='screener'>FUNDAMENTALS</p1></center>
     </body>
     '''
     with screen:
