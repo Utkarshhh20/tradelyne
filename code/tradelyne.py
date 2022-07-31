@@ -1042,9 +1042,9 @@ elif dashboard=='Fundamental Indicators':
                 fig_daily = plot_daily_sentiment(parsed_and_scored_news, tickerSymbol) 
                 graph1, graph2=st.columns(2)
                 with graph1:
-                    st.plotly_chart(fig_hourly)
+                    st.plotly_chart(fig_hourly, use_container_width=True)
                 with graph2:
-                    st.plotly_chart(fig_daily)
+                    st.plotly_chart(fig_daily, use_container_width=True)
 
                 description = """
                         The above chart averages the sentiment scores of {} stock hourly and daily.
