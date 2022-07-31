@@ -1374,9 +1374,9 @@ if dashboard=='Backtesting':
     with s1:
         ticker=st.text_input("Stock ticker", value="AAPL")
     with s2:
-        start=st.text_input("Start date", value="2018-01-31")
+        start=st.date_input("Start date", value="2018-01-31")
     with s3:
-        end=st.text_input("End date", value=date.today())
+        end=st.date_input("End date", value=date.today())
     with s4:
         cash=st.text_input("Starting cash", value=10000)
     with s5:
