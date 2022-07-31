@@ -381,7 +381,7 @@ def volatility():
     cashs=int(cashs)
     cerebro = bt.Cerebro()
     cerebro.broker.setcash(cash)
-    start_value=cash
+    start_value=cashs
     class SPYVIXData(bt.feeds.GenericCSVData):
         lines = ('vixopen', 'vixhigh', 'vixlow', 'vixclose',)
 
