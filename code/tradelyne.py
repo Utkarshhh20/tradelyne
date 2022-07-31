@@ -372,8 +372,12 @@ def backtestrsi(ticker, start, end, cash):
     strategy=''
 def volatility(ticker, start, end, cash):
     global strategy
+    import backtrader as bt
     import os
     from VIXStrategy import VIXStrategy
+    import yfinance as yf
+    import pandas as pd
+    global ticker
     cash=int(cash)
     cerebro = bt.Cerebro()
     cerebro.broker.setcash(cash)
@@ -407,8 +411,9 @@ def volatility(ticker, start, end, cash):
             ('volume', -1),
             ('openinterest', -1)
         )
-    df = yf.download(tickers=ticker, start=start, end=end, rounding= False)
+    #
     ticker=ticker
+    df = yf.download(tickers=ticker, start=start, end=end, rounding= False)
     df=df.reset_index() 
     df2 = yf.download(tickers='^VIX', start=start, end=end, rounding= False)
     df2.rename(columns = {'Open':'Vix Open', 'High':'Vix High', 'Low':'Vix Low', 'Close':'Vix Close'}, inplace = True)
@@ -416,22 +421,21 @@ def volatility(ticker, start, end, cash):
     df2=df2.drop("Adj Close", axis=1)
     df2=df2.reset_index()
     df3=df2
-    df3.to_csv(r'https://github.com/Utkarshhh20/trial/blob/main/trial.csv')
     df2=df2.drop("Date", axis=1)
     result=pd.concat([df, df2], axis=1, join='inner')
-    result.to_csv(r'C:\Users\Utki\Desktop\code\stock\trial2.csv')
-    result = pd.read_csv('trial2.csv')
+    results=result
+    df3.to_csv(r'https://github.com/Utkarshhh20/trial/blob/main/trial.csv')
+    results.to_csv(r'https://github.com/Utkarshhh20/trial/blob/main/trial2.csv')
+    first_column1 = results.columns[0]
+    results.to_csv('trial2.csv', index=False)
+    #results = pd.read_csv('trial2.csv')
     # If you know the name of the column skip this
-    first_column = result.columns[0]
     # Delete first
-    result = result.drop([first_column], axis=1)
-    result.to_csv('trial2.csv', index=False)
+    #result = result.drop([first_column], axis=1)
     # If you know the name of the column skip this
-    first_column = df3.columns[0]
+    first_column2 = df3.columns[0]
     # Delete first
     df3.to_csv('trial.csv', index=False)
-    print(result)
-    print(df3)
     st.dataframe(result)
     st.dataframe(df3)
     csv_file = os.path.dirname(os.path.realpath(__file__)) + "/trial2.csv"
@@ -467,16 +471,8 @@ def volatility(ticker, start, end, cash):
     returns=str(returns)
     annual_return=str(annual_return)
     figure = cerebro.plot(volume=False)[0][0]
-    graph, blank, info = st.columns([2,0.2,1])
-    with graph:
-        st.pyplot(figure)
-    with blank:
-        st.write(' ')
-    with info:
-        st.header(strategy)
-        st.write(' ')
-        st.write(' ')
-        st.subheader(f"{ticker}'s total returns are {returns}% with a {annual_return}% APY")
+    st.pyplot(figure)
+    st.subheader(f"{ticker}'s total returns are {returns}% with a {annual_return}% APY")
     strategy=''
 
 def backtestgolden(ticker, start, end, cash):
