@@ -372,11 +372,7 @@ def backtestrsi(ticker, start, end, cash):
     strategy=''
 def volatility(ticker, start, end, cash):
     global strategy
-    import backtrader as bt
-    import os
     from VIXStrategy import VIXStrategy
-    import yfinance as yf
-    import pandas as pd
     cash=int(cash)
     cerebro = bt.Cerebro()
     cerebro.broker.setcash(cash)
@@ -442,8 +438,8 @@ def volatility(ticker, start, end, cash):
 
     spyVixDataFeed = SPYVIXData(dataname=csv_file)
     vixDataFeed = VIXData(dataname=vix_csv_file)
-    start=start.split("-")
-    end=end.split("-")
+    start=str(start).split("-")
+    end=str(end).split("-")
     for i in range(len(start)):
         start[i]=int(start[i])
     for j in range(len(end)):
