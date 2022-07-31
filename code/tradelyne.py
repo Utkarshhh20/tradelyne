@@ -427,10 +427,10 @@ def volatility(ticker, start, end, cash):
     results.to_csv(r'https://github.com/Utkarshhh20/trial/blob/main/trial2.csv')
     first_column1 = results.columns[0]
     results.to_csv('trial2.csv', index=False)
-    #results = pd.read_csv('trial2.csv')
+    results = pd.read_csv('trial2.csv')
     # If you know the name of the column skip this
     # Delete first
-    #result = result.drop([first_column], axis=1)
+    result = result.drop([first_column], axis=1)
     # If you know the name of the column skip this
     first_column2 = df3.columns[0]
     # Delete first
