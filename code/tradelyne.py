@@ -370,9 +370,14 @@ def backtestrsi(ticker, start, end, cash):
     st.write(stratdd[0].analyzers.sr.get_analysis())
     #st.write(stats)
     strategy=''
-def volatility(ticker, start, end, cash):
+def volatility():
     global strategy
     from VIXStrategy import VIXStrategy
+    import os
+    ticker=st.sidebar.text_input("Stock ticker", value="AAPL")
+    start=st.sidebar.text_input("Start date", value="2018-01-31")
+    end=st.sidebar.text_input("End date", value=today)
+    cash=st.sidebar.text_input("Starting cash", value=10000)
     cash=int(cash)
     cerebro = bt.Cerebro()
     cerebro.broker.setcash(cash)
@@ -419,14 +424,14 @@ def volatility(ticker, start, end, cash):
     df2=df2.drop("Date", axis=1)
     result=pd.concat([df, df2], axis=1, join='inner')
     results=result
-    df3.to_csv(r'https://github.com/Utkarshhh20/tradelyne/blob/main/code/trial.csv')
-    results.to_csv(r'https://github.com/Utkarshhh20/tradelyne/blob/main/code/trial2.csv')
+    df3.to_csv(r'https://github.com/Utkarshhh20/trial/blob/main/trial.csv')
+    results.to_csv(r'https://github.com/Utkarshhh20/trial/blob/main/trial2.csv')
     first_column1 = results.columns[0]
     results.to_csv('trial2.csv', index=False)
-    results = pd.read_csv('trial2.csv')
+    #results = pd.read_csv('trial2.csv')
     # If you know the name of the column skip this
     # Delete first
-    #result = result.iloc[: , 1:]
+    #result = result.drop([first_column], axis=1)
     # If you know the name of the column skip this
     first_column2 = df3.columns[0]
     # Delete first
@@ -438,8 +443,8 @@ def volatility(ticker, start, end, cash):
 
     spyVixDataFeed = SPYVIXData(dataname=csv_file)
     vixDataFeed = VIXData(dataname=vix_csv_file)
-    start=str(start).split("-")
-    end=str(end).split("-")
+    start=start.split("-")
+    end=end.split("-")
     for i in range(len(start)):
         start[i]=int(start[i])
     for j in range(len(end)):
@@ -449,8 +454,8 @@ def volatility(ticker, start, end, cash):
     day=end[2]-start[2]
     totalyear=year+(month/12)+(day/365)
     matplotlib.use('Agg')
-    cerebro.adddata(results)
-    cerebro.adddata(df3)
+    cerebro.adddata(spyVixDataFeed)
+    cerebro.adddata(vixDataFeed)
 
     cerebro.addstrategy(VIXStrategy)
 
@@ -469,7 +474,7 @@ def volatility(ticker, start, end, cash):
     st.pyplot(figure)
     st.subheader(f"{ticker}'s total returns are {returns}% with a {annual_return}% APY")
     strategy=''
-
+	
 def backtestgolden(ticker, start, end, cash):
     global strategy
     cash=int(cash)
@@ -1383,7 +1388,7 @@ if dashboard=='Backtesting':
     while strategy=='RSI':
         backtestrsi(ticker=ticker, start=start, end=end, cash=cash)
     while strategy=='Volatility VIX':
-        volatility(ticker=ticker, start=start, end=end, cash=cash)
+        volatility()
     while strategy=='Golden Crossover':
         backtestgolden(ticker=ticker, start=start, end=end, cash=cash)
     while strategy=='Bollinger Bands':
