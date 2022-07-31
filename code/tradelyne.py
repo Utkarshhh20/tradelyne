@@ -374,10 +374,10 @@ def volatility():
     global strategy
     from VIXStrategy import VIXStrategy
     import os
-    ticker=st.sidebar.text_input("Stock ticker", value="AAPL")
-    start=st.sidebar.text_input("Start date", value="2018-01-31")
-    end=st.sidebar.text_input("End date", value=today)
-    cash=st.sidebar.text_input("Starting cash", value=10000)
+    ticker=st.text_input("Stock ticker", value="AAPL")
+    start=st.text_input("Start date", value="2018-01-31")
+    end=st.text_input("End date", value=today)
+    cash=st.text_input("Starting cash", value=10000)
     cash=int(cash)
     cerebro = bt.Cerebro()
     cerebro.broker.setcash(cash)
