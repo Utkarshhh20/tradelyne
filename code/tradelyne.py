@@ -76,7 +76,7 @@ finally:
     import talib
 st.set_page_config(page_title='Tradelyne', page_icon='📈', layout="wide",initial_sidebar_state='collapsed')
 st.markdown('<style>div.block-container{padding-left:0rem;}</style>', unsafe_allow_html=True)
-'''st.markdown("""
+st.markdown("""
         <style>
                .css-18e3th9 {
                     padding-top: 0rem;
@@ -572,18 +572,6 @@ sticky_mode='sticky', #jumpy or not-jumpy, but sticky or pinned
 use_animation=True,
 key='NavBar'
 )
-#selected=option_menu(
-#    menu_title=None,
-#    options=[1,2,3],
-#    icons=['stocks', 'laptop', 'plane'],
-#    orientation='horizontal',
-#    styles={
-#            "container": {"padding": "0!important", "background-color": "#fafafa"},
-#            "icon": {"color": "orange", "font-size": "25px"}, 
-#            "nav-link": {"font-size": "25px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
-#            "nav-link-selected": {"background-color": "green"},
-#        }
-#)'''
 if dashboard=='Tradelyne':
     logo='''
         <style>
