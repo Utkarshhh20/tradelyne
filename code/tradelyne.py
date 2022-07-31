@@ -804,7 +804,7 @@ elif dashboard=='Fundamental Indicators':
     <style>
     .screener {
         font-family:Montserrat;
-        font-size:36px;
+        font-size:35px;
         font-weight:1000;
         font-style: bold;
         margin-left:0px;
