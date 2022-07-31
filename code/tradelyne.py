@@ -1559,7 +1559,7 @@ if dashboard=='Portfolio Optimizer':
             </body>
             '''
             st.markdown(holdings, unsafe_allow_html=True)
-            st.plotly_chart(fig_pie)
+            st.plotly_chart(fig_pie, use_container_width=True)
         with stats:
             st.subheader('Expected annual return: {}%'.format((expected_annual_return*100).round(2)))
             st.write('___________')
@@ -1578,14 +1578,14 @@ if dashboard=='Portfolio Optimizer':
             st.image(fig_efficient_frontier)
         with col2:
             st.subheader("Correlation between stocks")
-            st.plotly_chart(fig_corr) # fig_corr is not a plotly chart
+            st.plotly_chart(fig_corr, use_container_width=True) # fig_corr is not a plotly chart
         col1,col2=st.columns(2)
         with col1:
             st.subheader('Price of Individual Stocks')
-            st.plotly_chart(fig_price, width=100)
+            st.plotly_chart(fig_price, use_container_width=True)
         with col2:
             st.subheader('Cumulative Returns of Stocks Starting with $100')
-            st.plotly_chart(fig_cum_returns)	
+            st.plotly_chart(fig_cum_returns, use_container_width=True)	
     except:
         st.write('Enter correct stock tickers to be included in portfolio separated\
         by commas WITHOUT spaces, e.g. "MA,FB,V,AMZN,JPM,BA"and hit Enter.')
