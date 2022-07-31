@@ -374,11 +374,11 @@ def volatility():
     global strategy
     from VIXStrategy import VIXStrategy
     import os
-    ticker=st.text_input("Stock ticker", value="AAPL")
-    start=st.text_input("Start date", value="2018-01-31")
-    end=st.text_input("End date", value=today)
-    cash=st.text_input("Starting cash", value=10000)
-    cash=int(cash)
+    tickers=st.text_input("Stock ticker", value="AAPL")
+    starts=st.text_input("Start date", value="2018-01-31")
+    ends=st.text_input("End date", value=today)
+    cashs=st.text_input("Starting cash", value=10000)
+    cashs=int(cashs)
     cerebro = bt.Cerebro()
     cerebro.broker.setcash(cash)
     start_value=cash
@@ -413,9 +413,9 @@ def volatility():
         )
     #
     ticker=ticker
-    df = yf.download(tickers=ticker, start=start, end=end, rounding= False)
+    df = yf.download(tickers=tickers, start=starts, end=ends, rounding= False)
     df=df.reset_index() 
-    df2 = yf.download(tickers='^VIX', start=start, end=end, rounding= False)
+    df2 = yf.download(tickers='^VIX', start=starts, end=ends, rounding= False)
     df2.rename(columns = {'Open':'Vix Open', 'High':'Vix High', 'Low':'Vix Low', 'Close':'Vix Close'}, inplace = True)
     df2=df2.drop("Volume", axis=1)
     df2=df2.drop("Adj Close", axis=1)
@@ -443,15 +443,15 @@ def volatility():
 
     spyVixDataFeed = SPYVIXData(dataname=csv_file)
     vixDataFeed = VIXData(dataname=vix_csv_file)
-    start=start.split("-")
-    end=end.split("-")
-    for i in range(len(start)):
-        start[i]=int(start[i])
-    for j in range(len(end)):
-        end[j]=int(end[j])
-    year=end[0]-start[0]
-    month=end[1]-start[1]
-    day=end[2]-start[2]
+    starts=starts.split("-")
+    ends=ends.split("-")
+    for i in range(len(starts)):
+        starts[i]=int(starts[i])
+    for j in range(len(ends)):
+        ends[j]=int(ends[j])
+    year=ends[0]-starts[0]
+    month=ends[1]-starts[1]
+    day=ends[2]-starts[2]
     totalyear=year+(month/12)+(day/365)
     matplotlib.use('Agg')
     cerebro.adddata(spyVixDataFeed)
