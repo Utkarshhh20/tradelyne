@@ -411,8 +411,7 @@ def volatility():
             ('volume', -1),
             ('openinterest', -1)
         )
-    #
-    ticker=ticker
+   
     df = yf.download(tickers=tickers, start=starts, end=ends, rounding= False)
     df=df.reset_index() 
     df2 = yf.download(tickers='^VIX', start=starts, end=ends, rounding= False)
