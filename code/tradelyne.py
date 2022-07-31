@@ -423,8 +423,8 @@ def volatility(ticker, start, end, cash):
     df2=df2.drop("Date", axis=1)
     result=pd.concat([df, df2], axis=1, join='inner')
     results=result
-    df3.to_csv(r'https://github.com/Utkarshhh20/trial/blob/main/trial.csv')
-    results.to_csv(r'https://github.com/Utkarshhh20/trial/blob/main/trial2.csv')
+    df3.to_csv(r'https://github.com/Utkarshhh20/tradelyne/blob/main/code/trial.csv')
+    results.to_csv(r'https://github.com/Utkarshhh20/tradelyne/blob/main/code/trial2.csv')
     first_column1 = results.columns[0]
     results.to_csv('trial2.csv', index=False)
     results = pd.read_csv('trial2.csv')
