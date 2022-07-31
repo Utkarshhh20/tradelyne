@@ -1633,7 +1633,7 @@ if dashboard=='Twitter Analysis':
     if option == 'Twitter':
         with dashboard2:
             usernames=[]
-            account=st.selectbox(label='Select a twitter account', options=['Traderstewie', 'The_chart_life', 'Tmltrader', 'Benzinga', 'Breakoutstocks', 'Stephanie_link', 'SunriseTrader'], 2)
+            account=st.selectbox(label='Select a twitter account', options=['Traderstewie', 'The_chart_life', 'Tmltrader', 'Benzinga', 'Breakoutstocks', 'Stephanie_link', 'SunriseTrader'])
             usernames.append(account)
         for username in usernames:
             user = api.get_user(screen_name=username)
