@@ -449,8 +449,8 @@ def volatility(ticker, start, end, cash):
     day=end[2]-start[2]
     totalyear=year+(month/12)+(day/365)
     matplotlib.use('Agg')
-    cerebro.adddata(spyVixDataFeed)
-    cerebro.adddata(vixDataFeed)
+    cerebro.adddata(results)
+    cerebro.adddata(df3)
 
     cerebro.addstrategy(VIXStrategy)
 
