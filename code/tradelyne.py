@@ -377,7 +377,6 @@ def volatility(ticker, start, end, cash):
     from VIXStrategy import VIXStrategy
     import yfinance as yf
     import pandas as pd
-    global ticker
     cash=int(cash)
     cerebro = bt.Cerebro()
     cerebro.broker.setcash(cash)
