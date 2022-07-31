@@ -475,7 +475,8 @@ def volatility():
     strategy=''
 	
 def backtestgolden(ticker, start, end, cash):
-    global strategy
+    from goldencrossover import goldencrossover
+    global strategy 
     cash=int(cash)
     cerebro=bt.Cerebro()
     cerebro.broker.set_cash(cash)
