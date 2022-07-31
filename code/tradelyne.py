@@ -1056,8 +1056,6 @@ elif dashboard=='Fundamental Indicators':
                 st.table(parsed_and_scored_news)
                     
 if dashboard=='Chart Analysis':
-	    st.write(' ')
-	    st.write(' ')	
             screen, start, end, stock=st.columns([1.5,0.7,0.7,0.7])
             screener='''
             <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
