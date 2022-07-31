@@ -810,7 +810,7 @@ elif dashboard=='Fundamental Indicators':
     st.write(' ')
     st.write(' ')
     st.write(' ')	
-    screen, start, end, stock=st.columns([0.7,0.7,0.7,0.7])	
+    screen, start, end, stock=st.columns([1.4,0.7,0.7,0.7])	
     screener='''
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
     <style>
@@ -1043,7 +1043,7 @@ elif dashboard=='Fundamental Indicators':
             st.write(' ')
             st.write(' ')
             st.header("Stock News Sentiment Analyzer")
-            if dashboard=='Screener':
+            if dashboard=='Fundamental Indicators':
 		
 	        
                 st.subheader("Hourly and Daily Sentiment of {} Stock".format(tickerSymbol))
