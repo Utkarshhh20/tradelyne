@@ -240,8 +240,8 @@ def backtestrsi(ticker, start, end, cash):
     cerebro.broker.set_cash(cash)
     start_value=cash
     data = bt.feeds.PandasData(dataname=yf.download(ticker, start, end))
-    start=start.split("-")
-    end=end.split("-")
+    start=str(start).split("-")
+    end=str(end).split("-")
     for i in range(len(start)):
         start[i]=int(start[i])
     for j in range(len(end)):
@@ -481,8 +481,8 @@ def backtestgolden(ticker, start, end, cash):
     cerebro.broker.set_cash(cash)
     start_value=cash
     data = bt.feeds.PandasData(dataname=yf.download(ticker, start, end))
-    start=start.split("-")
-    end=end.split("-")
+    start=str(start).split("-")
+    end=str(end).split("-")
     for i in range(len(start)):
         start[i]=int(start[i])
     for j in range(len(end)):
