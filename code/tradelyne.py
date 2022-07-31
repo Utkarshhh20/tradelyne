@@ -936,16 +936,16 @@ elif dashboard=='Screener':
 
                 st.subheader('Settings')
                 st.caption('Adjust charts settings and then press apply')
-
+                
                 with st.form('settings_form'):
-                    #show_data = st.checkbox('Show data table', True)
 
                     show_volume = st.checkbox('Show volume', True)
-                    show_rsi = st.checkbox('Show Relative Strength Index (RSI)', False)
-                    show_macd = st.checkbox('Show Moving Average Convergence and Divergence (MACD)', False)
                     show_nontrading_days = st.checkbox('Show non-trading days', False)
-
-                    # https://github.com/matplotlib/mplfinance/blob/master/examples/styles.ipynb
+                    overlap_indicators=st.multiselect('Momentum Indicators', options=['Bollinger Bands','SMA20', 'SMA50', 'SMA200', 'EMA12', 'EMA24', 'EMA50', 'EMA200'])
+                    momentum_indicators=st.multiselect('Momentum Indicators', options=['RSI', 'MACD', 'Stochastic Indicator', 'Average Directional Index'])
+                    volume_indicators=st.multiselect('Volume Indicators', options=['A/D Line', 'On-Balance Volume'])
+                    volatility_indicators=st.multiselect('Volatility Indicators', options=['Average True Range', 'Normalized Average True Range'])
+        
                     chart_styles = [
                         'default', 'binance', 'blueskies', 'brasil', 
                         'charles', 'checkers', 'classic', 'yahoo',
@@ -956,59 +956,215 @@ elif dashboard=='Screener':
                         'candle', 'ohlc', 'line', 'renko', 'pnf'
                     ]
                     chart_type = st.selectbox('Chart type', options=chart_types, index=chart_types.index('candle'))
-
-                    mav1 = st.number_input('MAV 1', min_value=3, max_value=30, value=3, step=1)
-                    mav2 = st.number_input('MAV 2', min_value=3, max_value=30, value=6, step=1)
-                    mav3 = st.number_input('MAV 3', min_value=3, max_value=30, value=9, step=1)
-
                     st.form_submit_button('Apply')
 
                 data = get_historical_data(tickerSymbol, str(start_date))
-                start_date_rsi=start_date - timedelta(days=14)
-                df_rsi=yf.download(tickerSymbol, start=start_date_rsi, end=end_date)
-                rsi_data=talib.RSI(df_rsi['Close'], timeperiod=14)
-                rsi_data=rsi_data.dropna()
-                while len(rsi_data)<len(data):
-                    print(len(rsi_data),len(data))
-                    start_date_rsi=start_date_rsi - timedelta(days=1)
-                    df_rsi=yf.download(tickerSymbol, start=start_date_rsi, end=end_date)
-                    rsi_data=talib.RSI(df_rsi['Close'], timeperiod=14)
-                    rsi_data=rsi_data.dropna()
-                start_date_macd=start_date - timedelta(days=41)
-                df_macd=yf.download(tickerSymbol, start=start_date_macd, end=end_date)
-                macd, macdsignal, macdhist = talib.MACD(df_macd['Close'], fastperiod=12, slowperiod=26, signalperiod=9)
-                macd, macdsignal, macdhist= macd.dropna(), macdsignal.dropna(), macdhist.dropna()
-                while len(macd)<len(data):
-                    print(len(macd),len(data))
-                    start_date_macd=start_date_macd - timedelta(days=1)
-                    df_macd=yf.download(tickerSymbol, start=start_date_macd, end=end_date)
-                    macd, macdsignal, macdhist = talib.MACD(df_macd['Close'], fastperiod=12, slowperiod=26, signalperiod=9)
-                    macd, macdsignal, macdhist= macd.dropna(), macdsignal.dropna(), macdhist.dropna()
+                df=yf.download(tickerSymbol, start=start_date, end=end_date)
                 if show_volume==True:
                     count=count+1
-                if show_rsi==True and show_macd==True:
-                    additional=[fplt.make_addplot(rsi_data,color='#096cad', panel=count, ylabel="RSI"),
-                    fplt.make_addplot(macdhist,type='bar',width=0.7,panel=count+1, color='grey',alpha=1,secondary_y=False),
-                    fplt.make_addplot(macd,panel=count+1,color='#096cad',secondary_y=True),
-                    fplt.make_addplot(macdsignal,panel=count+1,color='orange',secondary_y=True),]
-                elif show_rsi==True:
-                    additional=[
-                        fplt.make_addplot(rsi_data,color='#096cad', panel=count, ylabel="RSI"),
-                    ]
-                    count=count+1
-                elif show_macd==True:
-                    additional=[
-                    fplt.make_addplot(macdhist,type='bar',width=0.7,panel=count, color='grey',alpha=1,secondary_y=False),
-                    fplt.make_addplot(macd,panel=count,color='#096cad',secondary_y=True),
-                    fplt.make_addplot(macdsignal,panel=count,color='orange',secondary_y=True),
-                    ]
-
+                for i in overlap_indicators:
+                    if i=='Bollinger Bands':
+                        #BOLLINGER BANDS
+                        start_date_bb=start_date - timedelta(days=17)
+                        df_bb=yf.download(tickerSymbol, start=start_date_bb, end=end_date)
+                        df_bb=df_bb['Close']
+                        upperband, middleband, lowerband = talib.BBANDS(df_bb, timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
+                        upperband,middleband, lowerband=upperband.dropna(), middleband.dropna(), lowerband.dropna()
+                        while len(upperband)<len(data):
+                            start_date_bb=start_date_bb - timedelta(days=1)
+                            df_bb=yf.download(tickerSymbol, start=start_date_bb, end=end_date)
+                            df_bb=df_bb['Close']
+                            upperband, middleband, lowerband = talib.BBANDS(df_bb, timeperiod=20, nbdevup=2, nbdevdn=2, matype=0)
+                            upperband,middleband, lowerband=upperband.dropna(), middleband.dropna(), lowerband.dropna()
+                        additional.append(fplt.make_addplot(upperband, width=0.5))
+                        additional.append(fplt.make_addplot(middleband, width=0.5))
+                        additional.append(fplt.make_addplot(lowerband, width=0.5))
+                    if i=='SMA20':
+                        #SMA 20
+                        start_date_sma20=start_date - timedelta(days=18)
+                        df_sma20=yf.download(tickerSymbol, start=start_date_sma20, end=end_date)
+                        sma20=talib.SMA(df_sma20["Close"], timeperiod=20)
+                        sma20=sma20.dropna()
+                        while len(sma20)<len(data):
+                            start_date_sma20=start_date_sma20 - timedelta(days=1)
+                            df_sma20=yf.download(tickerSymbol, start=start_date_sma20, end=end_date)
+                            sma20=talib.SMA(df_sma20["Close"], timeperiod=20)
+                            sma20=sma20.dropna()
+                        additional.append(fplt.make_addplot(sma20, width=0.5))
+                    if i=='SMA50':
+                        #SMA 50
+                        start_date_sma50=start_date - timedelta(days=48)
+                        df_sma50=yf.download(tickerSymbol, start=start_date_sma50, end=end_date)
+                        sma50=talib.SMA(df_sma50["Close"], timeperiod=50)
+                        sma50=sma50.dropna()
+                        while len(sma50)<len(data):
+                            start_date_sma50=start_date_sma50 - timedelta(days=1)
+                            df_sma50=yf.download(tickerSymbol, start=start_date_sma50, end=end_date)
+                            sma50=talib.SMA(df_sma50["Close"], timeperiod=50)
+                            sma50=sma50.dropna()
+                        additional.append(fplt.make_addplot(sma50, width=0.5))
+                    if i=='SMA200':
+                        #SMA 200
+                        start_date_sma200=start_date - timedelta(days=198)
+                        df_sma200=yf.download(tickerSymbol, start=start_date_sma200, end=end_date)
+                        sma200=talib.SMA(df_sma200["Close"], timeperiod=200)
+                        sma200=sma200.dropna()
+                        while len(sma200)<len(data):
+                            start_date_sma200=start_date_sma200 - timedelta(days=1)
+                            df_sma200=yf.download(tickerSymbol, start=start_date_sma200, end=end_date)
+                            sma200=talib.SMA(df_sma200["Close"], timeperiod=200)
+                            sma200=sma200.dropna()
+                        additional.append(fplt.make_addplot(sma200, width=0.5))
+                    if i=='EMA12':
+                        #EMA 12
+                        start_date_ema12=start_date - timedelta(days=10)
+                        df_ema12=yf.download(tickerSymbol, start=start_date_ema12, end=end_date)
+                        ema12=talib.EMA(df_ema12["Close"], timeperiod=12)
+                        ema12=ema12.dropna()
+                        while len(ema12)<len(data):
+                            start_date_ema12=start_date_ema12 - timedelta(days=1)
+                            df_ema12=yf.download(tickerSymbol, start=start_date_ema12, end=end_date)
+                            ema12=talib.EMA(df_ema12["Close"], timeperiod=12)
+                            ema12=ema12.dropna()
+                        additional.append(fplt.make_addplot(ema12, width=0.5))
+                    if i=='EMA24':
+                        #EMA 24
+                        start_date_ema24=start_date - timedelta(days=22)
+                        df_ema24=yf.download(tickerSymbol, start=start_date_ema24, end=end_date)
+                        ema24=talib.EMA(df_ema24["Close"], timeperiod=24)
+                        ema24=ema24.dropna()
+                        while len(ema24)<len(data):
+                            start_date_ema24=start_date_ema24 - timedelta(days=1)
+                            df_ema24=yf.download(tickerSymbol, start=start_date_ema24, end=end_date)
+                            ema24=talib.EMA(df_ema24["Close"], timeperiod=24)
+                            ema24=ema24.dropna()
+                        additional.append(fplt.make_addplot(ema24, width=0.5))
+                    if i=='EMA50':
+                        #EMA 50
+                        start_date_ema50=start_date - timedelta(days=48)
+                        df_ema50=yf.download(tickerSymbol, start=start_date_ema50, end=end_date)
+                        ema50=talib.EMA(df_ema50["Close"], timeperiod=50)
+                        ema50=ema50.dropna()
+                        while len(ema50)<len(data):
+                            start_date_ema50=start_date_ema50 - timedelta(days=1)
+                            df_ema50=yf.download(tickerSymbol, start=start_date_ema50, end=end_date)
+                            ema50=talib.EMA(df_ema50["Close"], timeperiod=50)
+                            ema50=ema50.dropna()
+                
+                        additional.append(fplt.make_addplot(ema50, width=0.5))
+                    if i=='EMA200':
+                        #EMA 200
+                        start_date_ema200=start_date - timedelta(days=198)
+                        df_ema200=yf.download(tickerSymbol, start=start_date_ema200, end=end_date)
+                        ema200=talib.EMA(df_ema200["Close"], timeperiod=200)
+                        ema200=ema200.dropna()
+                        while len(ema200)<len(data):
+                            start_date_ema200=start_date_ema200 - timedelta(days=1)
+                            df_ema200=yf.download(tickerSymbol, start=start_date_ema200, end=end_date)
+                            ema200=talib.EMA(df_ema200["Close"], timeperiod=200)
+                            ema200=ema200.dropna()
+                        additional.append(fplt.make_addplot(ema200, width=0.5))
+                    
+                for i in momentum_indicators:
+                    if i=='RSI':
+                        #RSI
+                        start_date_rsi=start_date - timedelta(days=14)
+                        df_rsi=yf.download(tickerSymbol, start=start_date_rsi, end=end_date)
+                        rsi_data=talib.RSI(df_rsi['Close'], timeperiod=14)
+                        rsi_data=rsi_data.dropna()
+                        while len(rsi_data)<len(data):
+                            print(len(rsi_data),len(data))
+                            start_date_rsi=start_date_rsi - timedelta(days=1)
+                            df_rsi=yf.download(tickerSymbol, start=start_date_rsi, end=end_date)
+                            rsi_data=talib.RSI(df_rsi['Close'], timeperiod=14)
+                            rsi_data=rsi_data.dropna()
+                        additional.append(fplt.make_addplot(rsi_data,color='#096cad', panel=count, ylabel="RSI"))
+                        count=count+1
+                    if i=='MACD':
+                        #MACD
+                        start_date_macd=start_date - timedelta(days=41)
+                        df_macd=yf.download(tickerSymbol, start=start_date_macd, end=end_date)
+                        macd, macdsignal, macdhist = talib.MACD(df_macd['Close'], fastperiod=12, slowperiod=26, signalperiod=9)
+                        macd, macdsignal, macdhist= macd.dropna(), macdsignal.dropna(), macdhist.dropna()
+                        while len(macd)<len(data):
+                            print(len(macd),len(data))
+                            start_date_macd=start_date_macd - timedelta(days=1)
+                            df_macd=yf.download(tickerSymbol, start=start_date_macd, end=end_date)
+                            macd, macdsignal, macdhist = talib.MACD(df_macd['Close'], fastperiod=12, slowperiod=26, signalperiod=9)
+                            macd, macdsignal, macdhist= macd.dropna(), macdsignal.dropna(), macdhist.dropna()
+                        additional.append(fplt.make_addplot(macdhist,type='bar',width=0.7,panel=count, color='grey',alpha=1,ylabel='MACD', secondary_y=False))
+                        additional.append(fplt.make_addplot(macd,panel=count,color='#096cad',secondary_y=True))
+                        additional.append(fplt.make_addplot(macdsignal,panel=count,color='orange',secondary_y=True))
+                        count=count+1
+                    if i=='Stochastic Indicator':
+                        #STOCHASTIC INDICATOR
+                        start_date_stoch=start_date - timedelta(days=12)
+                        df_stoch=yf.download(tickerSymbol, start=start_date_stoch, end=end_date)
+                        slowk, slowd = talib.STOCH(df_stoch['High'], df_stoch['Low'], df_stoch['Close'], fastk_period=14, slowk_period=3, slowk_matype=1, slowd_period=3, slowd_matype=0)
+                        while len(slowk)<len(data):
+                            start_date_stoch=start_date_stoch - timedelta(days=1)
+                            df_stoch=yf.download(tickerSymbol, start=start_date_stoch, end=end_date)
+                            df_stoch=yf.download(tickerSymbol, start=start_date_stoch, end=end_date)
+                            slowk, slowd = talib.STOCH(df_stoch['High'], df_stoch['Low'], df_stoch['Close'], fastk_period=14, slowk_period=3, slowk_matype=1, slowd_period=3, slowd_matype=0)
+                        additional.append(fplt.make_addplot(slowk,panel=count,color='#096cad',ylabel='Stoch', secondary_y=True))
+                        additional.append(fplt.make_addplot(slowd,panel=count,color='orange',secondary_y=True))
+                        count=count+1
+                    if i=='Average Directional Index':
+                        #ADX
+                        start_date_adx=start_date - timedelta(days=12)
+                        df_adx=yf.download(tickerSymbol, start=start_date_adx, end=end_date)
+                        adx=talib.ADX(df_adx['High'], df_adx['Low'], df_adx["Close"], timeperiod=14)
+                        adx=adx.dropna()
+                        while len(adx)<len(data):
+                            start_date_adx=start_date_adx - timedelta(days=1)
+                            df_adx=yf.download(tickerSymbol, start=start_date_adx, end=end_date)
+                            adx=talib.ADX(df_adx['High'], df_adx['Low'], df_adx["Close"], timeperiod=14)
+                            adx=adx.dropna()
+                        additional.append(fplt.make_addplot(adx,color='#096cad', panel=count, ylabel="ADX"))
+                        count=count+1
+                for i in volume_indicators:
+                    if i=='A/D Line':
+                        #A/D LINE
+                        ad=talib.AD(df['High'], df['Low'], df['Close'], df['Volume'])
+                        additional.append(fplt.make_addplot(ad, panel=count, ylabel="A/D"))
+                        count=count+1
+                    if i=='On-Balance Volume':
+                        obv=talib.OBV(df['Close'], df['Volume'])
+                        additional.append(fplt.make_addplot(obv, panel=count, ylabel="OBV"))
+                        count=count+1
+                for i in volatility_indicators:
+                    if i=='Average True Range':
+                        #ATR
+                        start_date_atr=start_date - timedelta(days=12)
+                        df_atr=yf.download(tickerSymbol, start=start_date_atr, end=end_date)
+                        avg_tr=talib.ATR(df_atr['High'], df_atr['Low'], df_atr['Close'], timeperiod=14)
+                        avg_tr=avg_tr.dropna()
+                        while len(avg_tr)<len(data):
+                            start_date_atr=start_date_atr - timedelta(days=1)
+                            df_atr=yf.download(tickerSymbol, start=start_date_atr, end=end_date)
+                            avg_tr=talib.ATR(df_atr['High'], df_atr['Low'], df_atr['Close'], timeperiod=14)
+                            avg_tr=talib.ATR(df_atr['High'], df_atr['Low'], df_atr['Close'], timeperiod=14)
+                            avg_tr=avg_tr.dropna()
+                        additional.append(fplt.make_addplot(avg_tr,color='red', panel=count, ylabel="ATR"))
+                        count=count+1
+                    if i=='Normalized Average True Range':
+                        start_date_natr=start_date - timedelta(days=12)
+                        df_natr=yf.download(tickerSymbol, start=start_date_natr, end=end_date)
+                        natr=talib.NATR(df_natr['High'], df_natr['Low'], df_natr['Close'], timeperiod=14)
+                        natr=natr.dropna()
+                        while len(natr)<len(data):
+                            start_date_natr=start_date_natr - timedelta(days=1)
+                            df_natr=yf.download(tickerSymbol, start=start_date_natr, end=end_date)
+                            natr=talib.NATR(df_natr['High'], df_natr['Low'], df_natr['Close'], timeperiod=14)
+                            natr=talib.NATR(df_natr['High'], df_natr['Low'], df_natr['Close'], timeperiod=14)
+                            natr=natr.dropna()
+                        additional.append(fplt.make_addplot(natr,color='red', panel=count, ylabel="NATR"))
+                        count=count+1
                 fig, ax = fplt.plot(
                     data,
                     title=f'{tickerSymbol}, {start_date} to {end_date}',
                     type=chart_type,
                     show_nontrading=show_nontrading_days,
-                    mav=(int(mav1),int(mav2),int(mav3)),
                     volume=show_volume,
                     addplot=additional,
                     style=chart_style,
