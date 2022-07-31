@@ -810,13 +810,13 @@ elif dashboard=='Fundamental Indicators':
     st.write(' ')
     st.write(' ')
     st.write(' ')	
-    screen, start, end, stock=st.columns([1.4,0.7,0.7,0.7])	
+    screen, start, end, stock=st.columns([0.9,0.7,0.7,0.7])	
     screener='''
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
     <style>
     .screener {
         font-family:Montserrat;
-        font-size:36px;
+        font-size:40px;
         font-weight:1000;
         font-style: bold;
         margin-left:0px;
