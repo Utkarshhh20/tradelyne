@@ -91,7 +91,7 @@ st.markdown("""
                     padding-left: 1rem;
                 }
         </style>
-        """, unsafe_allow_html=True)'''
+        """, unsafe_allow_html=True)
 
 today=date.today()
 oneyr= today - timedelta(days=365)
