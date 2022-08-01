@@ -1103,9 +1103,9 @@ if dashboard=='Chart Analysis':
                     ]
                         chart_style = st.selectbox('Chart style', options=chart_styles, index=chart_styles.index('yahoo'))
                     with c:
-                        overlap_indicators=st.multiselect('Overlap Indicators', options=['Bollinger Bands','SMA20', 'SMA50', 'SMA200', 'EMA12', 'EMA24', 'EMA50', 'EMA200'])
+                        overlap_indicators=st.multiselect('Overlap Indicators', options=['Bollinger Bands','SMA20', 'SMA50', 'SMA200', 'EMA12', 'EMA24', 'EMA50', 'EMA200'], default='Bollinger Bnads')
                     with d:
-                        momentum_indicators=st.multiselect('Momentum Indicators', options=['RSI', 'MACD', 'Stochastic Indicator', 'Average Directional Index'])
+                        momentum_indicators=st.multiselect('Momentum Indicators', options=['RSI', 'MACD', 'Stochastic Indicator', 'Average Directional Index'], default='MACD')
                     with e:
                         volume_indicators=st.multiselect('Volume Indicators', options=['A/D Line', 'On-Balance Volume'])
                     with f:
