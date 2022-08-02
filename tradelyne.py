@@ -79,6 +79,12 @@ st.set_page_config(page_title='Tradelyne', page_icon='📈', layout="wide",initi
 st.markdown('<style>div.block-container{padding-left:0rem;}</style>', unsafe_allow_html=True)
 st.markdown("""
         <style>
+	       .appview-container .main .block-container {
+	            padding-top: 0rem;
+                    padding-bottom: 0rem;
+                    padding-left: 0rem;
+                    padding-right: 3rem;
+		    }
                .css-18e3th9 {
                     padding-top: 0rem;
                     padding-bottom: 10rem;
@@ -93,7 +99,6 @@ st.markdown("""
                 }
         </style>
         """, unsafe_allow_html=True)
-
 today=date.today()
 oneyr= today - timedelta(days=365)
 count=1
