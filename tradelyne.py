@@ -574,6 +574,7 @@ sticky_mode='sticky', #jumpy or not-jumpy, but sticky or pinned
 use_animation=True,
 key='NavBar'
 )
+#<center><img src='https://cdn.myportfolio.com/fd40c2a8-1f6f-47d7-8997-48ba5415a69c/6c46ac13-6a18-427a-9baa-01ad3b53ac45_rw_600.png?h=21b14417887f0576feb32fcbfd191788' alt='logo' class='logo'></img></center> 
 if dashboard=='Tradelyne':
     logo='''
         <style>
@@ -587,7 +588,7 @@ if dashboard=='Tradelyne':
 	<center><img src='https://i.postimg.cc/fTtX8hfv/Finance-14-removebg-preview.png' alt='logo' class='logo'></img></center> 
         </body>
         '''
-#<center><img src='https://cdn.myportfolio.com/fd40c2a8-1f6f-47d7-8997-48ba5415a69c/6c46ac13-6a18-427a-9baa-01ad3b53ac45_rw_600.png?h=21b14417887f0576feb32fcbfd191788' alt='logo' class='logo'></img></center> 
+
     what='''
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
     <style>
