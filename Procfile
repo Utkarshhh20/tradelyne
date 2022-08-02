@@ -1,1 +1,1 @@
-web: sh setup.sh && streamlit run tradelyne
+web: sh setup.sh && streamlit run tradelyne.py
