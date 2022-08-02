@@ -304,38 +304,6 @@ def backtestrsi(ticker, start, end, cash):
                 #    st.write(tra)
         print(trade)
         #st.write(trade)
-        if int(start_value)<=int(final_value):
-            fig = go.Figure(go.Indicator(
-            mode = "gauge+number+delta",
-            value = final_value,
-            domain = {'x': [0, 1], 'y': [0, 1]},
-            title = {'text': "Strategy returns"},
-            delta = {'reference': start_value, 'increasing': {'color': "royalblue"}},
-            gauge={'axis': {'range': [None, final_value*6/5], 'tickwidth': 1, 'tickcolor': "green"},
-                'bar': {'color': "green"},
-                'steps': [
-                    {'range': [0, start_value], 'color': '#D3D3D3'},
-                    {'range': [start_value, final_value], 'color': 'royalblue'}],}
-            ))
-            fig.update_layout(paper_bgcolor = "white", font = {'color': "black", 'family': "Arial"}, width=500, height=500,)
-            #st.plotly_chart(fig, width=5)
-        else:
-            fig = go.Figure(go.Indicator(
-            mode = "gauge+number+delta",
-            value = final_value,
-            domain = {'x': [0, 1], 'y': [0, 1]},
-            title = {'text': "Strategy returns"},
-            delta = {'reference': start_value, 'decreasing': {'color': "black"}},
-            gauge={'axis': {'range': [None, start_value*6/5], 'tickwidth': 1, 'tickcolor': "red"},
-                'bar': {'color': "red"},
-                'steps': [
-                    {'range': [0, start_value], 'color': 'white'},
-                    {'range': [final_value, start_value], 'color': '#D3D3D3'}],}
-            ))
-            fig.update_layout(paper_bgcolor = "white", font = {'color': "black", 'family': "Arial"}, width=500, height=500)
-            #st.plotly_chart(fig)
-        #st.subheader('Total returns: ', f"{returns}")
-        #st.subheader('Annual returns: ', f"{annual_return}")
         st.subheader(f"{ticker}'s total returns are {returns}% with a {annual_return}% APY")
         st.subheader(f'Initial investment: {cash}')
         st.subheader(f'Final investment value: {final_value}')
@@ -1113,7 +1081,7 @@ if dashboard=='Chart Analysis':
                     with c:
                         overlap_indicators=st.multiselect('Overlap Indicators', options=['Bollinger Bands','SMA20', 'SMA50', 'SMA200', 'EMA12', 'EMA24', 'EMA50', 'EMA200'], default=['Bollinger Bands'])
                     with d:
-                        momentum_indicators=st.multiselect('Momentum Indicators', options=['RSI', 'MACD', 'Stochastic Indicator', 'Average Directional Index'], default=['MACD'])
+                        momentum_indicators=st.multiselect('Momentum Indicators', options=['RSI', 'MACD', 'Stochastic Indicator', 'Average Directional Index'])
                     with e:
                         volume_indicators=st.multiselect('Volume Indicators', options=['A/D Line', 'On-Balance Volume'])
                     with f:
