@@ -585,7 +585,7 @@ if dashboard=='Tradelyne':
         }
         </style>
         <body>
-	<center><a href="https://freeimage.host/i/Sg3eDJ"><img src="https://iili.io/Sg3eDJ.png" alt="Sg3eDJ.png" class ='logo' border="0"></img></a></center> 
+	<center><img src="https://i.imgur.com/nr6VrrA.png" alt="logo" class ='logo'></img></center> 
         </body>
         '''
 
