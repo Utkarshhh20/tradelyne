@@ -767,7 +767,7 @@ if dashboard=='Tradelyne':
         st.write('____________________')
     st.write(' ')
     st.write(' ')
-    blank1, txt, blank2=st.columns([0.5,2,0.5])
+    blank1, txt, blank2=st.columns([0.1,2,0.1])
     with blank1:
         st.write(' ')
     with txt:
