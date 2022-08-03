@@ -553,7 +553,7 @@ if dashboard=='Tradelyne':
         }
         </style>
         <body>
-        <center><img src="https://cdn.myportfolio.com/fd40c2a8-1f6f-47d7-8997-48ba5415a69c/6c46ac13-6a18-427a-9baa-01ad3b53ac45_rw_600.png?h=21b14417887f0576feb32fcbfd191788" alt="House" class='taimg'></img> </center>
+        <center><img src="https://cdn.myportfolio.com/fd40c2a8-1f6f-47d7-8997-48ba5415a69c/c42084a6-d9bc-4995-859a-62fdb73797b1_rw_600.png?h=6a58bdd0b826937bd241b4a7b8593909" alt="House" class='taimg'></img> </center>
         </body>
         '''
 
