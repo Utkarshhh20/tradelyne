@@ -550,7 +550,7 @@ if dashboard=='Tradelyne':
         width: 370px;
         margin-top:10px;
         margin-left:0px;
-	margin-bottom:20px;
+	margin-bottom:10px;
         }
         </style>
         <body>
