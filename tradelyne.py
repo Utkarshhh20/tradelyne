@@ -765,42 +765,42 @@ if dashboard=='Tradelyne':
         st.markdown(bttxt, unsafe_allow_html=True)
         st.markdown(btsubtxt, unsafe_allow_html=True)
         st.write('____________________')
-        st.write(' ')
-        st.write(' ')
-        warninghead='''
-            <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
-            <style>
-            .warning {
-                font-family: 'Montserrat';
-                font-size: 32px;
-                margin-top:0px;
-                font-weight: 700;
-                margin-bottom: 0px;
-            }
-            </style>
-            <body>
-            <center> <p1 class='warning'> DISCLAIMER ! </p1> </center>
-            </body>
-            '''
-        st.markdown(warninghead, unsafe_allow_html=True)
-        st.write(" ")
-        st.write(" ")
-        warningtxt='''
-            <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
-            <style>
-            .warningtxt {
-                font-family: 'Montserrat';
-                font-size: 15px;
-                margin-top:20px;
-                font-weight: 600;
-                margin-bottom: 0px;
-            }
-            </style>
-            <body>
-            <center> <p1 class='warningtxt'> Stock trading is inherently risky, and the users agree to assume complete and full responsibility for the outcomes of all trading decisions that they make, including but not limited to loss of capital. None of these communications should be construed as an offer to buy or sell securities, nor advice to do so. All comments and posts made by the company, the group companies associated with it, and their employees/owners are made only on behalf of the registered intermediaries/experts who are availing of the company’s services and such comments and posts are for information purposes only and under no circumstances should be used as the basis for actual trading. Under no circumstances should any user make trading decisions based solely on the information available on the app. The company is not acting as a qualified financial advisor and the users should not construe any information discussed on the app to constitute investment advice. It is informational in nature. </p1> </center>
-            </body>
-            '''
-        st.markdown(warningtxt, unsafe_allow_html=True)
+    st.write(' ')
+    st.write(' ')
+    warninghead='''
+        <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
+        <style>
+        .warning {
+            font-family: 'Montserrat';
+            font-size: 32px;
+            margin-top:0px;
+            font-weight: 700;
+            margin-bottom: 0px;
+        }
+        </style>
+        <body>
+        <center> <p1 class='warning'> DISCLAIMER ! </p1> </center>
+        </body>
+        '''
+    st.markdown(warninghead, unsafe_allow_html=True)
+    st.write(" ")
+    st.write(" ")
+    warningtxt='''
+        <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
+        <style>
+        .warningtxt {
+            font-family: 'Montserrat';
+            font-size: 15px;
+            margin-top:20px;
+            font-weight: 600;
+            margin-bottom: 0px;
+        }
+        </style>
+        <body>
+        <center> <p1 class='warningtxt'> Stock trading is inherently risky, and the users agree to assume complete and full responsibility for the outcomes of all trading decisions that they make, including but not limited to loss of capital. None of these communications should be construed as an offer to buy or sell securities, nor advice to do so. All comments and posts made by the company, the group companies associated with it, and their employees/owners are made only on behalf of the registered intermediaries/experts who are availing of the company’s services and such comments and posts are for information purposes only and under no circumstances should be used as the basis for actual trading. Under no circumstances should any user make trading decisions based solely on the information available on the app. The company is not acting as a qualified financial advisor and the users should not construe any information discussed on the app to constitute investment advice. It is informational in nature. </p1> </center>
+        </body>
+        '''
+    st.markdown(warningtxt, unsafe_allow_html=True)
 elif dashboard=='Fundamental Indicators':
     st.write(' ')
     st.write(' ')
