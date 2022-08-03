@@ -547,17 +547,16 @@ if dashboard=='Tradelyne':
     logo='''
         <style>
         .logo{
-        width: 370px;
-        margin-top:10px;
-        margin-left:0px;
-	margin-bottom:10px;
+            width: 45%;
+            margin-top:20px;
+            margin-left:-30px;
+            margin-bottom:70px;
         }
         </style>
         <body>
-        <center><img src="https://cdn.myportfolio.com/fd40c2a8-1f6f-47d7-8997-48ba5415a69c/c42084a6-d9bc-4995-859a-62fdb73797b1_rw_600.png?h=6a58bdd0b826937bd241b4a7b8593909" alt="House" class='taimg'></img> </center>
+        <center><img src='https://cdn.myportfolio.com/fd40c2a8-1f6f-47d7-8997-48ba5415a69c/c42084a6-d9bc-4995-859a-62fdb73797b1_rw_600.png?h=6a58bdd0b826937bd241b4a7b8593909' alt='logo' class='logo'></img></center> 
         </body>
         '''
-
     what='''
     <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
     <style>
