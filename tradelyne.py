@@ -547,7 +547,7 @@ if dashboard=='Tradelyne':
     logo='''
         <style>
         .logo{
-            width: 50%;
+            width: 55%;
             margin-top:50px;
             margin-left:0px;
             margin-bottom:80px;
