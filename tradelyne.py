@@ -484,6 +484,7 @@ def backtestgolden(ticker, start, end, cash):
     pyfolio = strat0.analyzers.getbyname('pf')
     returnss, positions, transactions, gross_lev,  = pyfolio.get_pf_items()
     final_value=cerebro.broker.getvalue()
+    final_value=round(final_value, 2)
     returns=(final_value-start_value)*100/start_value
     annual_return=returns/totalyear
     returns=round(returns, 2)
@@ -582,9 +583,9 @@ def backtestbb(ticker, start, end, cash):
     print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
     pyfolio = strat0.analyzers.getbyname('pf')
     returnss, positions, transactions, gross_lev,  = pyfolio.get_pf_items()
-    final_value=cerebro.broker.getvalue()
-    final_value=round(final_value, 2)
-    returns=(final_value-start_value)*100/start_value
+    final_values=cerebro.broker.getvalue()
+    final_values=round(final_values, 2)
+    returns=(final_values-start_value)*100/start_value
     annual_return=returns/totalyear
     returns=str(round(returns, 2))
     annual_return=str(round(annual_return,2))
@@ -598,17 +599,9 @@ def backtestbb(ticker, start, end, cash):
         st.header(strategy)
         st.write(' ')
         st.write(' ')
-        trade=stratdd[0].analyzers.ta.get_analysis()
-        tra=''
-        trade=stratdd[0].analyzers.ta.get_analysis()
-                #x=trade[i]
-                #for i in x:
-                #    tra=tra+(i.upper(), ':', x[i])
-                #    st.write(tra)
-        #st.write(trade)
         st.subheader(f"{ticker}'s total returns are {returns}% with a {annual_return}% APY")
         st.subheader(f'Initial investment: {cash}')
-        st.subheader(f'Final investment value: {final_value}')
+        st.subheader(f'Final investment value: {final_values}')
         sr=stratdd[0].analyzers.sr.get_analysis()
         print(sr)
         for i in sr:
