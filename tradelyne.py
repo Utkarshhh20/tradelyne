@@ -550,7 +550,6 @@ def backtestgolden(ticker, start, end, cash):
     #st.write(stats)
     strategy=''
 def backtestbb(ticker, start, end, cash):
-    global strategy
     cash=int(cash)
     cerebro=bt.Cerebro()
     cerebro.broker.set_cash(cash)
@@ -567,10 +566,9 @@ def backtestbb(ticker, start, end, cash):
     day=end[2]-start[2]
     totalyear=year+(month/12)+(day/365)
     matplotlib.use('Agg')
-    plt.show(block=False)
     cerebro.adddata(data)
+
     cerebro.addstrategy(BOLLStrat)
-    print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
     cerebro.addanalyzer(bt.analyzers.PyFolio ,_name='pf')
     cerebro.addanalyzer(bt.analyzers.PeriodStats, _name='cm')
     cerebro.addanalyzer(bt.analyzers.DrawDown, _name='dd')
@@ -578,30 +576,38 @@ def backtestbb(ticker, start, end, cash):
     cerebro.addanalyzer(bt.analyzers.SQN, _name='sqn')
     cerebro.addanalyzer(bt.analyzers.TradeAnalyzer ,_name='ta')
     cerebro.addanalyzer(bt.analyzers.SharpeRatio ,_name='sr')
+    print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
+
     stratdd=cerebro.run()
-    strat0 = stratdd[0]
+
     print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
+    strat0 = stratdd[0]
     pyfolio = strat0.analyzers.getbyname('pf')
     returnss, positions, transactions, gross_lev,  = pyfolio.get_pf_items()
-    final_values=cerebro.broker.getvalue()
-    final_values=round(final_values, 2)
-    returns=(final_values-start_value)*100/start_value
+    final_value=cerebro.broker.getvalue()
+    final_value=round(final_value, 2)
+    returns=(final_value-start_value)*100/start_value
     annual_return=returns/totalyear
-    returns=str(round(returns, 2))
-    annual_return=str(round(annual_return,2))
-    figure = cerebro.plot(style='line')[0][0]
-    graph, blank, info = st.columns([2,0.2,1])
+    returns=round(returns, 2)
+    annual_return=round(annual_return,2)
+    returns=str(returns)
+    annual_return=str(annual_return)
+    figure = cerebro.plot()[0][0]
+    graph, blank, info=st.columns([2,0.2, 1])
     with graph:
         st.pyplot(figure)
-    with blank:
+    with blank: 
         st.write(' ')
     with info:
         st.header(strategy)
         st.write(' ')
         st.write(' ')
+        trade=stratdd[0].analyzers.ta.get_analysis()
+        tra=''
+        trade=stratdd[0].analyzers.ta.get_analysis()
         st.subheader(f"{ticker}'s total returns are {returns}% with a {annual_return}% APY")
         st.subheader(f'Initial investment: {cash}')
-        st.subheader(f'Final investment value: {final_values}')
+        st.subheader(f'Final investment value: {final_value}')
         sr=stratdd[0].analyzers.sr.get_analysis()
         print(sr)
         for i in sr:
@@ -612,7 +618,6 @@ def backtestbb(ticker, start, end, cash):
         dd=stratdd[0].analyzers.dd.get_analysis()
         max=dd['max']
         print(max)
-        #max=max[1]
         drawdown='Drawdown Stats: \n'
         for i in max:
             max[i]=str(round(max[i], 3))
@@ -620,7 +625,6 @@ def backtestbb(ticker, start, end, cash):
         print(drawdown)
         st.subheader(drawdown)
     strategy=''
-
 menu_data = [
     {'icon': "fa fa-desktop", 'label':"Fundamental Indicators"},
     {'icon': "fa fa-signal", 'label':"Chart Analysis"},
