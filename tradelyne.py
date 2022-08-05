@@ -286,7 +286,6 @@ def backtestrsi(ticker, start, end, cash):
     annual_return=str(round(annual_return,2))
     figure = cerebro.plot(style='line')[0][0]
     graph, blank, info=st.columns([2,0.2, 1])
-    print(stratdd[0].analyzers.dd.get_analysis())
     with graph:
         st.pyplot(figure)
     with blank: 
@@ -302,7 +301,6 @@ def backtestrsi(ticker, start, end, cash):
                 #for i in x:
                 #    tra=tra+(i.upper(), ':', x[i])
                 #    st.write(tra)
-        print(trade)
         #st.write(trade)
         st.subheader(f"{ticker}'s total returns are {returns}% with a {annual_return}% APY")
         st.subheader(f'Initial investment: {cash}')
@@ -470,13 +468,21 @@ def backtestgolden(ticker, start, end, cash):
     cerebro.adddata(data)
 
     cerebro.addstrategy(goldencrossover)
-
+    cerebro.addanalyzer(bt.analyzers.PyFolio ,_name='pf')
+    cerebro.addanalyzer(bt.analyzers.PeriodStats, _name='cm')
+    cerebro.addanalyzer(bt.analyzers.DrawDown, _name='dd')
+    cerebro.addanalyzer(bt.analyzers.VWR, _name='vwr')
+    cerebro.addanalyzer(bt.analyzers.SQN, _name='sqn')
+    cerebro.addanalyzer(bt.analyzers.TradeAnalyzer ,_name='ta')
+    cerebro.addanalyzer(bt.analyzers.SharpeRatio ,_name='sr')
     print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
 
-    cerebro.run()
+    stratdd=cerebro.run()
 
     print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
-
+    strat0 = stratdd[0]
+    pyfolio = strat0.analyzers.getbyname('pf')
+    returnss, positions, transactions, gross_lev,  = pyfolio.get_pf_items()
     final_value=cerebro.broker.getvalue()
     returns=(final_value-start_value)*100/start_value
     annual_return=returns/totalyear
@@ -485,16 +491,62 @@ def backtestgolden(ticker, start, end, cash):
     returns=str(returns)
     annual_return=str(annual_return)
     figure = cerebro.plot()[0][0]
-    graph, blank, info = st.columns([2,0.2,1])
+    graph, blank, info=st.columns([2,0.2, 1])
     with graph:
         st.pyplot(figure)
-    with blank:
+    with blank: 
         st.write(' ')
     with info:
         st.header(strategy)
         st.write(' ')
         st.write(' ')
+        trade=stratdd[0].analyzers.ta.get_analysis()
+        tra=''
+        trade=stratdd[0].analyzers.ta.get_analysis()
+                #x=trade[i]
+                #for i in x:
+                #    tra=tra+(i.upper(), ':', x[i])
+                #    st.write(tra)
+        #st.write(trade)
         st.subheader(f"{ticker}'s total returns are {returns}% with a {annual_return}% APY")
+        st.subheader(f'Initial investment: {cash}')
+        st.subheader(f'Final investment value: {final_value}')
+        sr=stratdd[0].analyzers.sr.get_analysis()
+        print(sr)
+        for i in sr:
+            ratio=sr[i]
+        ratio=str(round(ratio, 3))
+        print(ratio)
+        st.subheader(f'Sharpe Ratio: {ratio}')
+        dd=stratdd[0].analyzers.dd.get_analysis()
+        max=dd['max']
+        print(max)
+        #max=max[1]
+        drawdown='Drawdown Stats: \n'
+        for i in max:
+            max[i]=str(round(max[i], 3))
+            drawdown=f"{drawdown} {i} : {max[i]}  |    "
+        print(drawdown)
+        st.subheader(drawdown)
+#        st.subheader('Trade Details')
+#        for i in trade:
+#            if i=='total' or i=='pnl' or i=='streak' or i=='lost' or i=='won':
+#                if i=='pnl':
+#                    pass
+#                    for j in i:
+#                        pass
+#                x=str(trade[i])
+#                for k in "[]()''":
+#                    x=x.replace(k, '')
+#                x=x.replace('AutoOrderedDict', '')
+#                st.write(i,x)
+#    st.write('')
+#    st.subheader(f"{ticker}'s total returns are {returns}% with a {annual_return}% APY")
+    #final_value=round(returns, 2)
+#    st.write(f'Initial investment: {cash}')
+#    st.write(f'Final money: {final_value}')
+#    st.write(stratdd[0].analyzers.sr.get_analysis())
+    #st.write(stats)
     strategy=''
 def backtestbb(ticker, start, end, cash):
     global strategy
@@ -503,13 +555,39 @@ def backtestbb(ticker, start, end, cash):
     cerebro.broker.set_cash(cash)
     start_value=cash
     data = bt.feeds.PandasData(dataname=yf.download(ticker, start, end))
+    start=str(start).split("-")
+    end=str(end).split("-")
+    for i in range(len(start)):
+        start[i]=int(start[i])
+    for j in range(len(end)):
+        end[j]=int(end[j])
+    year=end[0]-start[0]
+    month=end[1]-start[1]
+    day=end[2]-start[2]
+    totalyear=year+(month/12)+(day/365)
     matplotlib.use('Agg')
     plt.show(block=False)
     cerebro.adddata(data)
     cerebro.addstrategy(BOLLStrat)
     print('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
-    cerebro.run()
+    cerebro.addanalyzer(bt.analyzers.PyFolio ,_name='pf')
+    cerebro.addanalyzer(bt.analyzers.PeriodStats, _name='cm')
+    cerebro.addanalyzer(bt.analyzers.DrawDown, _name='dd')
+    cerebro.addanalyzer(bt.analyzers.VWR, _name='vwr')
+    cerebro.addanalyzer(bt.analyzers.SQN, _name='sqn')
+    cerebro.addanalyzer(bt.analyzers.TradeAnalyzer ,_name='ta')
+    cerebro.addanalyzer(bt.analyzers.SharpeRatio ,_name='sr')
+    stratdd=cerebro.run()
     print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
+    pyfolio = strat0.analyzers.getbyname('pf')
+    returnss, positions, transactions, gross_lev,  = pyfolio.get_pf_items()
+    final_value=cerebro.broker.getvalue()
+    final_value=round(final_value, 2)
+    returns=(final_value-start_value)*100/start_value
+    annual_return=returns/totalyear
+    returns=str(round(returns, 2))
+    annual_return=str(round(annual_return,2))
+    strat0 = stratdd[0]
     figure = cerebro.plot(style='line')[0][0]
     graph, blank, info = st.columns([2,0.2,1])
     with graph:
@@ -520,6 +598,34 @@ def backtestbb(ticker, start, end, cash):
         st.header(strategy)
         st.write(' ')
         st.write(' ')
+        trade=stratdd[0].analyzers.ta.get_analysis()
+        tra=''
+        trade=stratdd[0].analyzers.ta.get_analysis()
+                #x=trade[i]
+                #for i in x:
+                #    tra=tra+(i.upper(), ':', x[i])
+                #    st.write(tra)
+        #st.write(trade)
+        st.subheader(f"{ticker}'s total returns are {returns}% with a {annual_return}% APY")
+        st.subheader(f'Initial investment: {cash}')
+        st.subheader(f'Final investment value: {final_value}')
+        sr=stratdd[0].analyzers.sr.get_analysis()
+        print(sr)
+        for i in sr:
+            ratio=sr[i]
+        ratio=str(round(ratio, 3))
+        print(ratio)
+        st.subheader(f'Sharpe Ratio: {ratio}')
+        dd=stratdd[0].analyzers.dd.get_analysis()
+        max=dd['max']
+        print(max)
+        #max=max[1]
+        drawdown='Drawdown Stats: \n'
+        for i in max:
+            max[i]=str(round(max[i], 3))
+            drawdown=f"{drawdown} {i} : {max[i]}  |    "
+        print(drawdown)
+        st.subheader(drawdown)
         st.subheader(f"{ticker}'s total returns are {returns}% with a {annual_return}% APY")
     strategy=''
 
