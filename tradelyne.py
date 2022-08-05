@@ -578,6 +578,7 @@ def backtestbb(ticker, start, end, cash):
     cerebro.addanalyzer(bt.analyzers.TradeAnalyzer ,_name='ta')
     cerebro.addanalyzer(bt.analyzers.SharpeRatio ,_name='sr')
     stratdd=cerebro.run()
+    strat0 = stratdd[0]
     print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
     pyfolio = strat0.analyzers.getbyname('pf')
     returnss, positions, transactions, gross_lev,  = pyfolio.get_pf_items()
@@ -587,7 +588,6 @@ def backtestbb(ticker, start, end, cash):
     annual_return=returns/totalyear
     returns=str(round(returns, 2))
     annual_return=str(round(annual_return,2))
-    strat0 = stratdd[0]
     figure = cerebro.plot(style='line')[0][0]
     graph, blank, info = st.columns([2,0.2,1])
     with graph:
