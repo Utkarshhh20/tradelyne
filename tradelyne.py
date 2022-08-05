@@ -324,24 +324,24 @@ def backtestrsi(ticker, start, end, cash):
             drawdown=f"{drawdown} {i} : {max[i]}  |    "
         print(drawdown)
         st.subheader(drawdown)
-        st.subheader('Trade Details')
-        for i in trade:
-            if i=='total' or i=='pnl' or i=='streak' or i=='lost' or i=='won':
-                if i=='pnl':
-                    pass
-                    for j in i:
-                        pass
-                x=str(trade[i])
-                for k in "[]()''":
-                    x=x.replace(k, '')
-                x=x.replace('AutoOrderedDict', '')
-                st.write(i,x)
-    st.write('')
-    st.subheader(f"{ticker}'s total returns are {returns}% with a {annual_return}% APY")
+#        st.subheader('Trade Details')
+#        for i in trade:
+#            if i=='total' or i=='pnl' or i=='streak' or i=='lost' or i=='won':
+#                if i=='pnl':
+#                    pass
+#                    for j in i:
+#                        pass
+#                x=str(trade[i])
+#                for k in "[]()''":
+#                    x=x.replace(k, '')
+#                x=x.replace('AutoOrderedDict', '')
+#                st.write(i,x)
+#    st.write('')
+#    st.subheader(f"{ticker}'s total returns are {returns}% with a {annual_return}% APY")
     #final_value=round(returns, 2)
-    st.write(f'Initial investment: {cash}')
-    st.write(f'Final money: {final_value}')
-    st.write(stratdd[0].analyzers.sr.get_analysis())
+#    st.write(f'Initial investment: {cash}')
+#    st.write(f'Final money: {final_value}')
+#    st.write(stratdd[0].analyzers.sr.get_analysis())
     #st.write(stats)
     strategy=''
 def volatility():
