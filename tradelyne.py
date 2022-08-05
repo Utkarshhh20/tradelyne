@@ -626,7 +626,6 @@ def backtestbb(ticker, start, end, cash):
             drawdown=f"{drawdown} {i} : {max[i]}  |    "
         print(drawdown)
         st.subheader(drawdown)
-        st.subheader(f"{ticker}'s total returns are {returns}% with a {annual_return}% APY")
     strategy=''
 
 menu_data = [
