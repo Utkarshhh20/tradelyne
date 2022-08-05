@@ -550,6 +550,8 @@ def backtestgolden(ticker, start, end, cash):
     #st.write(stats)
     strategy=''
 def backtestbb(ticker, start, end, cash):
+    from bollingerband import BOLLStrat
+    global strategy
     cash=int(cash)
     cerebro=bt.Cerebro()
     cerebro.broker.set_cash(cash)
