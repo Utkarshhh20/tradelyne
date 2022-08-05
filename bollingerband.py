@@ -41,9 +41,9 @@ class BOLLStrat(bt.Strategy):
  
         if not self.position:
  
-            if self.data.close > self.boll.lines.top:
+      #      if self.data.close > self.boll.lines.top:
  
-                self.sell(exectype=bt.Order.Stop, price=self.boll.lines.top[0], size=self.p.size)
+     #           self.sell(exectype=bt.Order.Stop, price=self.boll.lines.top[0], size=self.p.size)
  
             if self.data.close < self.boll.lines.bot:
                 self.buy(exectype=bt.Order.Stop, price=self.boll.lines.bot[0], size=self.p.size)
@@ -55,8 +55,8 @@ class BOLLStrat(bt.Strategy):
             if self.position.size > 0:
                 self.sell(exectype=bt.Order.Limit, price=self.boll.lines.mid[0], size=self.p.size)
  
-            else:
-                self.buy(exectype=bt.Order.Limit, price=self.boll.lines.mid[0], size=self.p.size)
+       #     else:
+        #        self.buy(exectype=bt.Order.Limit, price=self.boll.lines.mid[0], size=self.p.size)
  
         if self.p.debug:
             print('---------------------------- NEXT ----------------------------------')
