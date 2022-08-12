@@ -1560,7 +1560,7 @@ if dashboard=='Portfolio Optimizer':
         return fig
 
 
-    st.header("Mean-variance Stock Portfolio Optimizer")
+    st.header("Max Sharpe Ratio Stock Portfolio Optimizer")
 
     col1, col2, col3 = st.columns(3)
 
