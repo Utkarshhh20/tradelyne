@@ -13,6 +13,7 @@ urllib3
 bs4
 yahoo_fin
 hydralit
+streamlit_analytics
 tweepy
 PyPortfolioOpt
 yahooquery
