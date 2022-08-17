@@ -9,7 +9,6 @@ import mplfinance as fplt
 import backtrader as bt 
 import matplotlib.pyplot as plt
 import matplotlib
-import streamlit_analytics
 import requests
 import tweepy
 import plotly.graph_objs as go
