@@ -9,6 +9,7 @@ import mplfinance as fplt
 import backtrader as bt 
 import matplotlib.pyplot as plt
 import matplotlib
+import streamlit_analytics
 import requests
 import tweepy
 import plotly.graph_objs as go
@@ -102,6 +103,7 @@ with open(path_ind, 'r') as index_file:
 
             index_file_f.write(newdata)
 st.set_page_config(page_title='Tradelyne', page_icon='📈', layout="wide",initial_sidebar_state='collapsed')
+streamlit_analytics.start_tracking()
 st.markdown('<style>div.block-container{padding-left:0rem;}</style>', unsafe_allow_html=True)
 st.markdown("""
         <style>
@@ -1806,4 +1808,4 @@ if dashboard=='Twitter Analysis':
             st.write(message['created_at'])
             st.subheader(message['body'])
             st.write('_______________________')
-
+streamlit_analytics.stop_tracking()
