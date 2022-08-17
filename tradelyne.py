@@ -102,8 +102,20 @@ with open(path_ind, 'r') as index_file:
             newdata=re.sub('<head>','<head>'+anlytcs_code,data)
 
             index_file_f.write(newdata)
+<!-- Default Statcounter code for Tradelyne https://tradelyne.herokuapp.com -->
+<script type="text/javascript">
+var sc_project=12785026; 
+var sc_invisible=1; 
+var sc_security="652ee28e"; 
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js" async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img class="statcounter"
+src="https://c.statcounter.com/12785026/0/652ee28e/1/" alt="Web Analytics"
+referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
+<!-- End of Statcounter Code -->
 st.set_page_config(page_title='Tradelyne', page_icon='📈', layout="wide",initial_sidebar_state='collapsed')
-streamlit_analytics.start_tracking()
 st.markdown('<style>div.block-container{padding-left:0rem;}</style>', unsafe_allow_html=True)
 st.markdown("""
         <style>
@@ -1808,4 +1820,3 @@ if dashboard=='Twitter Analysis':
             st.write(message['created_at'])
             st.subheader(message['body'])
             st.write('_______________________')
-streamlit_analytics.stop_tracking()
