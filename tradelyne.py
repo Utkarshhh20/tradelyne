@@ -117,7 +117,7 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
 <!-- End of Statcounter Code -->
 '''
 st.set_page_config(page_title='Tradelyne', page_icon='📈', layout="wide",initial_sidebar_state='collapsed')
-components.html(analytics_code, width=200, height=200)
+st.components.html(analytics_code, width=200, height=200)
 st.markdown('<style>div.block-container{padding-left:0rem;}</style>', unsafe_allow_html=True)
 st.markdown("""
         <style>
