@@ -77,48 +77,8 @@ import talib
 #    subprocess.check_call([sys.executable, "-m", "pip", "install", "--global-option=build_ext", "--global-option=-L/home/appuser/lib/", "--global-option=-I/home/appuser/include/", "ta-lib"])
 #finally:
 #    import talib
-anlytcs_code = """<script async src="https://www.googletagmanager.com/gtag/js?id=G-Q38PK1T9RE"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-Q38PK1T9RE');
-</script>"""
 
-# Fetch the path of the index.html file
-path_ind = os.path.dirname(st.__file__)+'/static/index.html'
-
-# Open the file
-with open(path_ind, 'r') as index_file:
-    data=index_file.read()
-
-    # Check whether there is GA script
-    if len(re.findall('UA-', data))==0:
-
-        # Insert Script for Google Analytics
-        with open(path_ind, 'w') as index_file_f:
-
-            # The Google Analytics script should be pasted in the header of the HTML file
-            newdata=re.sub('<head>','<head>'+anlytcs_code,data)
-
-            index_file_f.write(newdata)
-analytics_code='''
-<!-- Default Statcounter code for Tradelyne https://tradelyne.herokuapp.com -->
-<script type="text/javascript">
-var sc_project=12785026; 
-var sc_invisible=1; 
-var sc_security="652ee28e"; 
-</script>
-<script type="text/javascript"
-src="https://www.statcounter.com/counter/counter.js" async></script>
-<noscript><div class="statcounter"><a title="Web Analytics"
-href="https://statcounter.com/" target="_blank"><img class="statcounter"
-src="https://c.statcounter.com/12785026/0/652ee28e/1/" alt="Web Analytics"
-referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
-<!-- End of Statcounter Code -->
-'''
 st.set_page_config(page_title='Tradelyne', page_icon='📈', layout="wide",initial_sidebar_state='collapsed')
-components.html(analytics_code, width=200, height=200)
 st.markdown('<style>div.block-container{padding-left:0rem;}</style>', unsafe_allow_html=True)
 st.markdown("""
         <style>
