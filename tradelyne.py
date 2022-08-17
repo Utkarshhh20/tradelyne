@@ -77,8 +77,27 @@ import talib
 #    subprocess.check_call([sys.executable, "-m", "pip", "install", "--global-option=build_ext", "--global-option=-L/home/appuser/lib/", "--global-option=-I/home/appuser/include/", "ta-lib"])
 #finally:
 #    import talib
-
+analytics='''
+<!-- Default Statcounter code for Tradelyne
+https://tradelyne.herokuapp.com -->
+<script type="text/javascript">
+var sc_project=12785026; 
+var sc_invisible=1; 
+var sc_security="652ee28e"; 
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank"><img
+class="statcounter"
+src="https://c.statcounter.com/12785026/0/652ee28e/1/"
+alt="Web Analytics"
+referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
+<!-- End of Statcounter Code -->
+'''
 st.set_page_config(page_title='Tradelyne', page_icon='📈', layout="wide",initial_sidebar_state='collapsed')
+components.html(analytics, height=200, width=200)
 st.markdown('<style>div.block-container{padding-left:0rem;}</style>', unsafe_allow_html=True)
 st.markdown("""
         <style>
