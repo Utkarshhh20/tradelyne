@@ -1518,13 +1518,13 @@ if dashboard=='Backtesting':
     with blank:
         st.write(' ')
     with s1:
-        ticker=st.text_input("Stock ticker", value="AAPL", key='back')
+        ticker=st.text_input("Stock ticker", value="AAPL", key='backT')
     with s2:
-        start=st.date_input("Start date", value=date(2018,1,31), key='back')
+        start=st.date_input("Start date", value=date(2018,1,31), key='backS')
     with s3:
-        end=st.date_input("End date", value=date.today(), key='back')
+        end=st.date_input("End date", value=date.today(), key='backE')
     with s4:
-        cash=st.text_input("Starting cash", value=10000, key='back')
+        cash=st.text_input("Starting cash", value=10000, key='backC')
     with s5:
         strategy=st.selectbox('Choose your strategy', options=['RSI', 'Golden Crossover', 'Bollinger Bands'])
     st.write(' ')
