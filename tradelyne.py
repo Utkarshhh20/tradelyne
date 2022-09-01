@@ -1048,8 +1048,8 @@ elif dashboard=='Fundamental Indicators':
                 string_summary = tickerData.info['longBusinessSummary']
                 st.info(string_summary)
             st.write(' ')
-	    st.write('__________')
-	    stats=si.get_stats_valuation(tickerSymbol)
+            st.write('________________________')
+            stats=si.get_stats_valuation(tickerSymbol)
             data=yf.download(tickerSymbol, period='2y')
             data=data.reset_index()
             fig = px.line(data, x="Date", y="Close")
