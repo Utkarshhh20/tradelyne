@@ -239,7 +239,7 @@ def get_news():
             links.append(a['href'])
         
         # Clean up news dataframe
-        news.columns = ['Date', 'News Headline']
+        news.columns = ['Date', 'News Headline', 'Article Link']
         news['Article Link'] = links
         news = news.set_index('Date')
         return news
