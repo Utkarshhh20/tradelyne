@@ -1152,11 +1152,8 @@ elif dashboard=='Fundamental Indicators':
                         '''
                 insiderdataheader = Template(insiderheader).safe_substitute(insiderdata=tickerSymbol)
                 st.markdown(insiderdataheader, unsafe_allow_html=True)
-                #st.dataframe(news, width=10000)
+                st.dataframe(news, width=10000)
                 st.write(' ')
-                tickers = si.tickers_sp500()
-                recommendations = []
-		st.write(news)
                 for i in range(len(news)):
                     headline=news['News Headline'][i]
                     link=news['Article Link'][i]
