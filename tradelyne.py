@@ -243,7 +243,8 @@ def get_news():
         news['Article Link'] = links
         news = news.set_index('Date')
         return news
-
+    except Exception as e:
+        return e
 def get_insider():
     try:
         # Find insider table
