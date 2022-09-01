@@ -240,9 +240,11 @@ def get_news():
         
         # Clean up news dataframe
         news.columns = ['Date', 'News Headline', 'Article Link']
+	newscopy=news[['Date', 'News Headline']]
         news['Article Link'] = links
         news = news.set_index('Date')
-        return news
+	newscopy = newscopy.set_index('Date')
+        return newscopy
 
     except Exception as e:
         return e
