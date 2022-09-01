@@ -1132,24 +1132,24 @@ elif dashboard=='Fundamental Indicators':
                 st.write('')
                 news=get_news()
 		insiderheader='''
-					<link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
-					<style>
-					    .insidehead {
-					    font-family:Montserrat;
-					    font-size:30px;
-					    font-weight:1000;
-					    font-style: bold;
-					    float:left;
-					    margin-left:0px;
-					    margin-top: 10px;
-					}
-					</style>
+                        <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
+                        <style>
+                            .insidehead {
+                            font-family:Montserrat;
+                            font-size:30px;
+                            font-weight:1000;
+                            font-style: bold;
+                            float:left;
+                            margin-left:0px;
+                            margin-top: 10px;
+                        }
+                        </style>
 
-					<body>
-					<center><p1 class='insidehead'> Recent news on $insiderdata stock </p1></center>
-					</body>
-					'''
-		insiderdataheader = Template(insiderheader).safe_substitute(insiderdata=tickerSymbol)
+                        <body>
+                        <center><p1 class='insidehead'> Recent news on $insiderdata stock </p1></center>
+                        </body>
+                        '''
+                insiderdataheader = Template(insiderheader).safe_substitute(insiderdata=tickerSymbol)
 		st.markdown(insiderdataheader, unsafe_allow_html=True)
 		st.write(' ')
 		print(news)
