@@ -243,6 +243,7 @@ def get_news():
         news['Article Link'] = links
         news = news.set_index('Date')
         return news
+
     except Exception as e:
         return e
 def get_insider():
@@ -1130,37 +1131,37 @@ elif dashboard=='Fundamental Indicators':
                 st.write('___________________________')
                 st.write('')
                 news=get_news()
-                insiderheader='''
-                        <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
-                        <style>
-                            .insidehead {
-                            font-family:Montserrat;
-                            font-size:30px;
-                            font-weight:1000;
-                            font-style: bold;
-                            float:left;
-                            margin-left:0px;
-                            margin-top: 10px;
-                        }
-                        </style>
+		insiderheader='''
+					<link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
+					<style>
+					    .insidehead {
+					    font-family:Montserrat;
+					    font-size:30px;
+					    font-weight:1000;
+					    font-style: bold;
+					    float:left;
+					    margin-left:0px;
+					    margin-top: 10px;
+					}
+					</style>
 
-                        <body>
-                        <center><p1 class='insidehead'> Recent news on $insiderdata stock </p1></center>
-                        </body>
-                        '''
-                insiderdataheader = Template(insiderheader).safe_substitute(insiderdata=tickerSymbol)
-                st.markdown(insiderdataheader, unsafe_allow_html=True)
-                st.dataframe(news)
-                st.write(' ')
-                for i in range(len(news)):
-                    headline=news['News Headline'][i]
-                    link=news['Article Link'][i]
-                    st.write(f"{headline}: [More on this article]({link})")
-                    newscount=newscount+1
-                    if newscount<13:
-                        st.write('____________________')
-                    if newscount==13:
-                        break
+					<body>
+					<center><p1 class='insidehead'> Recent news on $insiderdata stock </p1></center>
+					</body>
+					'''
+		insiderdataheader = Template(insiderheader).safe_substitute(insiderdata=tickerSymbol)
+		st.markdown(insiderdataheader, unsafe_allow_html=True)
+		st.write(' ')
+		print(news)
+		for i in range(len(news)):
+				    headline=news['News Headline'][i]
+				    link=news['Article Link'][i]
+				    st.write(f"{headline}: [More on this article]({link})")
+				    newscount=newscount+1
+				    if newscount<15:
+					st.write('____________________')
+				    if newscount==15:
+					break
             # for extracting data from finviz
             finviz_url = 'https://finviz.com/quote.ashx?t='
             st.write(' ')
