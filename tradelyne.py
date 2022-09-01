@@ -1338,7 +1338,6 @@ elif dashboard=='Fundamental Indicators':
                 st.write(' ')
                 tickers = si.tickers_sp500()
                 recommendations = []
-                st.write(news)
                 for i in range(len(news)):
                     headline=news['News Headline'][i]
                     link=news['Article Link'][i]
