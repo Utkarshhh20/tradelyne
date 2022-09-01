@@ -239,15 +239,10 @@ def get_news():
             links.append(a['href'])
         
         # Clean up news dataframe
-        news.columns = ['Date', 'News Headline', 'Article Link']
-	newscopy=news[['Date', 'News Headline']]
+        news.columns = ['Date', 'News Headline']
         news['Article Link'] = links
         news = news.set_index('Date')
-	newscopy = newscopy.set_index('Date')
-        return newscopy
-
-    except Exception as e:
-        return e
+        return news
 
 def get_insider():
     try:
@@ -1154,7 +1149,7 @@ elif dashboard=='Fundamental Indicators':
                         '''
                 insiderdataheader = Template(insiderheader).safe_substitute(insiderdata=tickerSymbol)
                 st.markdown(insiderdataheader, unsafe_allow_html=True)
-                st.dataframe(news, width=10000)
+                st.dataframe(news)
                 st.write(' ')
                 for i in range(len(news)):
                     headline=news['News Headline'][i]
@@ -1172,8 +1167,6 @@ elif dashboard=='Fundamental Indicators':
             st.write(' ')
             st.header("Stock News Sentiment Analyzer")
             if dashboard=='Fundamental Indicators':
-		
-	        
                 st.subheader("Hourly and Daily Sentiment of {} Stock".format(tickerSymbol))
                 news_table = news_headlines(tickerSymbol)
                 parsed_news_df = parse_news(news_table)
