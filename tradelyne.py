@@ -1312,7 +1312,7 @@ elif dashboard=='Fundamental Indicators':
                 st.write('___________________________')
                 st.write('')
                 news=get_news()
-		insiderheader='''
+                insiderheader='''
                         <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
                         <style>
                             .insidehead {
@@ -1327,21 +1327,25 @@ elif dashboard=='Fundamental Indicators':
                         </style>
 
                         <body>
-                       <center><p1 class='insidehead'> Recent news on $insiderdata stock </p1></center>
-                       </body>
+                        <center><p1 class='insidehead'> Recent news on $insiderdata stock </p1></center>
+                        </body>
                         '''
                 insiderdataheader = Template(insiderheader).safe_substitute(insiderdata=tickerSymbol)
-		st.markdown(insiderdataheader, unsafe_allow_html=True)
-                #st.write(news)
-		for i in range(len(news)):
-				    headline=news['News Headline'][i]
-				    link=news['Article Link'][i]
-				    st.write(f"{headline}: [More on this article]({link})")
-				    newscount=newscount+1
-				    if newscount<15:
-					st.write('____________________')
-				    if newscount==15:
-					break
+                st.markdown(insiderdataheader, unsafe_allow_html=True)
+                #st.dataframe(news, width=10000)
+                st.write(' ')
+                tickers = si.tickers_sp500()
+                recommendations = []
+                print(news)
+                for i in range(len(news)):
+                    headline=news['News Headline'][i]
+                    link=news['Article Link'][i]
+                    st.write(f"{headline}: [More on this article]({link})")
+                    newscount=newscount+1
+                    if newscount<15:
+                        st.write('____________________')
+                    if newscount==15:
+                        break
             # for extracting data from finviz
             finviz_url = 'https://finviz.com/quote.ashx?t='
             st.write(' ')
