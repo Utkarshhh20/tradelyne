@@ -1046,6 +1046,187 @@ elif dashboard=='Fundamental Indicators':
                 st.write(' ')
                 string_summary = tickerData.info['longBusinessSummary']
                 st.info(string_summary)
+            st.write('________________________')
+            stats=si.get_stats_valuation(tickerSymbol)
+            data=yf.download(tickerSymbol, period='2y')
+            data=data.reset_index()
+            fig = px.line(data, x="Date", y="Close")
+            name, price = st.columns([1,3])
+            stockheader='''
+                <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
+                <style>
+                .stocknameheader {
+                    font-family: 'Montserrat';
+                    font-size: 20px;
+                    margin-top:20px;
+                    font-weight: 600;
+                    margin-bottom: 0px;
+                }
+                </style>
+                <body>
+                <center> <p1 class='stocknameheader'> Stock Price (2 Years) </p1> </center>
+                </body>
+                '''
+            with name:
+                st.header(tickerSymbol)
+                st.write(stats)
+            with price:
+                st.markdown(stockheader, unsafe_allow_html=True)
+                st.plotly_chart(fig, use_container_width=True)
+            graph1, graph2=st.columns(2)
+
+            earnings_hist = si.get_earnings_history(tickerSymbol)
+            earnings_hist = pd.DataFrame.from_dict(earnings_hist)
+            earnings_hist = earnings_hist[['startdatetime', 'epsactual', 'epsestimate']]
+            earnings_hist = earnings_hist.dropna()
+            eps_date=earnings_hist['startdatetime'].iloc[0:8]
+            eps_date=eps_date.values.tolist()
+            for i in range(len(eps_date)):
+                eps_date[i]=eps_date[i][:10]
+            eps_date=eps_date[::-1]
+            epsactual=earnings_hist['epsactual'].iloc[0:8]
+            epsactual=epsactual.values.tolist()
+            epsactual=epsactual[::-1]
+            epsest=earnings_hist['epsestimate'].iloc[0:8]
+            epsest=epsest.values.tolist()
+            epsest=epsest[::-1]
+            fig = go.Figure()
+            fig.add_trace(go.Bar(
+                x=eps_date,
+                y=epsactual,
+                name='EPS Actual',
+                text=epsactual,
+                textposition="outside",
+                marker_color='rgb(102,205,170)'
+            ))
+            fig.add_trace(go.Bar(
+                x=eps_date,
+                y=epsest,
+                name='EPS Estimate',
+                text=epsest,
+                textposition="outside",
+                marker_color='rgb(255,160,122)'
+            ))
+            fig.update_layout(barmode='group', xaxis_tickangle=0)
+            epsheader='''
+            <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
+            <style>
+            .eps {
+                font-family: 'Montserrat';
+                font-size: 20px;
+                margin-top:20px;
+                font-weight: 600;
+                margin-bottom: 0px;
+            }
+            </style>
+            <body>
+            <center> <p1 class='eps'> EPS Actual vs Estimate </p1> </center>
+            </body>
+            '''
+            with graph1:
+                st.markdown(epsheader, unsafe_allow_html=True)
+                st.plotly_chart(fig, use_container_width=True)
+
+
+            balance_sheet = si.get_balance_sheet(tickerSymbol)
+            balance_sheet = balance_sheet.transpose()
+            liab_hist = balance_sheet['totalLiab']
+            liab_hist = liab_hist.reset_index()
+            liab_hist = liab_hist.rename(columns={'endDate': 'Year', 'totalLiab': 'Total Liabities'})
+            fig = px.bar(liab_hist, x=liab_hist['Year'], y=liab_hist['Total Liabities'], text_auto=True, labels=['Year', 'Total Liabities'])
+            fig.update_traces(marker_color='rgb(135,206,235)', textposition="outside", cliponaxis=False)
+            liabheader='''
+            <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
+            <style>
+            .liab {
+                font-family: 'Montserrat';
+                font-size: 20px;
+                margin-top:20px;
+                font-weight: 600;
+                margin-bottom: 0px;
+            }
+            </style>
+            <body>
+            <center> <p1 class='liab'> Total Liabities </p1> </center>
+            </body>
+            '''
+            with graph2:
+                st.markdown(liabheader, unsafe_allow_html=True)
+                st.plotly_chart(fig, use_container_width=True)
+
+            graph1, graph2, graph3=st.columns(3)
+            with graph1:
+                cash_hist = balance_sheet['cash']
+                cash_hist = cash_hist.reset_index()
+                cash_hist = cash_hist.rename(columns={'endDate': 'Year', 'cash': 'Cash in hand'})
+                fig = px.bar(cash_hist, x=cash_hist['Year'], y=cash_hist['Cash in hand'], text_auto=True, labels=['Year', 'Cash'])
+                fig.update_traces(marker_color='rgb(189,183,107)', textposition="outside", cliponaxis=False)
+                cashheader='''
+                <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
+                <style>
+                .cashinhand {
+                    font-family: 'Montserrat';
+                    font-size: 20px;
+                    margin-top:20px;
+                    font-weight: 600;
+                    margin-bottom: 0px;
+                }
+                </style>
+                <body>
+                <center> <p1 class='cashinhand'> Cash in hand </p1> </center>
+                </body>
+                '''
+                st.markdown(cashheader, unsafe_allow_html=True)
+                st.plotly_chart(fig, use_container_width=True)
+
+            with graph2:
+                asset_hist = balance_sheet['totalAssets']
+                asset_hist = asset_hist.reset_index()
+                asset_hist = asset_hist.rename(columns={'endDate': 'Year', 'totalAssets': 'Total Assets'})
+                fig = px.bar(asset_hist, x=asset_hist['Year'], y=asset_hist['Total Assets'], text_auto=True, labels=['Year', 'Total Assets'])
+                fig.update_traces(marker_color='rgb(255,218,185)', textposition="outside", cliponaxis=False)
+                assetheader='''
+                <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
+                <style>
+                .assets {
+                    font-family: 'Montserrat';
+                    font-size: 20px;
+                    margin-top:20px;
+                    font-weight: 600;
+                    margin-bottom: 0px;
+                }
+                </style>
+                <body>
+                <center> <p1 class='assets'> Total Assets </p1> </center>
+                </body>
+                '''
+                st.markdown(assetheader, unsafe_allow_html=True)
+                st.plotly_chart(fig, use_container_width=True)
+            with graph3:
+                income_statement=si.get_income_statement(tickerSymbol)
+                income_statement=income_statement.transpose()
+                ebit_hist = income_statement['ebit']
+                ebit_hist = ebit_hist.reset_index()
+                ebit_hist = ebit_hist.rename(columns={'endDate': 'Year', 'ebit': 'EBIT'})
+                fig = px.bar(ebit_hist, x=ebit_hist['Year'], y=ebit_hist['EBIT'], title="EBIT", text_auto=True, labels=['Year', 'EBIT'])
+                fig.update_traces(marker_color='rgb(49,241,247)', textposition="outside", cliponaxis=False)
+                ebitheader='''
+                <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
+                <style>
+                .ebit {
+                    font-family: 'Montserrat';
+                    font-size: 20px;
+                    margin-top:20px;
+                    font-weight: 600;
+                    margin-bottom: 0px;
+                }
+                </style>
+                <body>
+                <center> <p1 class='ebit'> EBIT </p1> </center>
+                </body>
+                '''
+                st.markdown(ebitheader, unsafe_allow_html=True)
+                st.plotly_chart(fig, use_container_width=True)
             fundamentals, blank, data_show=st.columns([0.35,0.02,1])
             #if show_data:
             with fundamentals:
@@ -1131,36 +1312,36 @@ elif dashboard=='Fundamental Indicators':
                 st.write('___________________________')
                 st.write('')
                 news=get_news()
-		#insiderheader='''
-                #        <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
-                #        <style>
-                #            .insidehead {
-                #            font-family:Montserrat;
-                #            font-size:30px;
-                #            font-weight:1000;
-                #            font-style: bold;
-                #            float:left;
-                #            margin-left:0px;
-                #            margin-top: 10px;
-                #        }
-                #        </style>
+		insiderheader='''
+                        <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
+                        <style>
+                            .insidehead {
+                            font-family:Montserrat;
+                            font-size:30px;
+                            font-weight:1000;
+                            font-style: bold;
+                            float:left;
+                            margin-left:0px;
+                            margin-top: 10px;
+                        }
+                        </style>
 
-                #        <body>
-                #       <center><p1 class='insidehead'> Recent news on $insiderdata stock </p1></center>
-                #       </body>
-                #        '''
-                #insiderdataheader = Template(insiderheader).safe_substitute(insiderdata=tickerSymbol)
-		#st.markdown(insiderdataheader, unsafe_allow_html=True)
+                        <body>
+                       <center><p1 class='insidehead'> Recent news on $insiderdata stock </p1></center>
+                       </body>
+                        '''
+                insiderdataheader = Template(insiderheader).safe_substitute(insiderdata=tickerSymbol)
+		st.markdown(insiderdataheader, unsafe_allow_html=True)
                 #st.write(news)
-		#for i in range(len(news)):
-		#		    headline=news['News Headline'][i]
-		#		    link=news['Article Link'][i]
-		#		    st.write(f"{headline}: [More on this article]({link})")
-		#		    newscount=newscount+1
-		#		    if newscount<15:
-		#			st.write('____________________')
-		#		    if newscount==15:
-		#			break
+		for i in range(len(news)):
+				    headline=news['News Headline'][i]
+				    link=news['Article Link'][i]
+				    st.write(f"{headline}: [More on this article]({link})")
+				    newscount=newscount+1
+				    if newscount<15:
+					st.write('____________________')
+				    if newscount==15:
+					break
             # for extracting data from finviz
             finviz_url = 'https://finviz.com/quote.ashx?t='
             st.write(' ')
