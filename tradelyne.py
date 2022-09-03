@@ -1346,9 +1346,9 @@ elif dashboard=='Fundamental Indicators':
                     link=news['Article Link'][i]
                     st.write(f"{headline}: [More on this article]({link})")
                     newscount=newscount+1
-                    if newscount<15:
+                    if newscount<13:
                         st.write('____________________')
-                    if newscount==15:
+                    if newscount==13:
                         break
             # for extracting data from finviz
             finviz_url = 'https://finviz.com/quote.ashx?t='
