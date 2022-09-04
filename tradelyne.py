@@ -1419,8 +1419,8 @@ if dashboard=='Chart Analysis':
                     #show_data = st.checkbox('Show data table', True)
                     with a:
                         chart_types = [
-                        'candle', 'ohlc', 'line', 'renko', 'pnf'
-                    ]
+                        'candle', 'ohlc', 'line'
+                    ]#'renko', 'pnf'
                         chart_type = st.selectbox('Chart type', options=chart_types, index=chart_types.index('candle'))
                     with b:
                         chart_styles = [
