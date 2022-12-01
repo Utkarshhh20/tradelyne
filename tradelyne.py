@@ -1341,15 +1341,15 @@ elif dashboard=='Fundamental Indicators':
                 tickers = si.tickers_sp500()
                 recommendations = []
                 print(news)
-                for i in range(len(news)):
-                    headline=news['News Headline'][i]
-                    link=news['Article Link'][i]
-                    st.write(f"{headline}: [More on this article]({link})")
-                    newscount=newscount+1
-                    if newscount<13:
-                        st.write('____________________')
-                    if newscount==13:
-                        break
+                #for i in range(len(news)):
+                #    headline=news['News Headline'][i]
+                #    link=news['Article Link'][i]
+                #    st.write(f"{headline}: [More on this article]({link})")
+                #    newscount=newscount+1
+                #    if newscount<13:
+                #        st.write('____________________')
+                #    if newscount==13:
+                #        break
             # for extracting data from finviz
             finviz_url = 'https://finviz.com/quote.ashx?t='
             st.write(' ')
