@@ -975,6 +975,7 @@ elif dashboard=='Fundamental Indicators':
             # Ticker information
             string_image=tickerData.info['logo_url']
             string_logo = '<img src=%s>' % tickerData.info['logo_url']
+	    st.write(string_logo)
     if string_logo=='<img src=>':
             blank1, error, blank2=st.columns([0.8,1,0.2])
             with blank1:
