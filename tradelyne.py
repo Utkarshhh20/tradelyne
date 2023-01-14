@@ -653,9 +653,9 @@ def backtestbb(ticker, start, end, cash):
         st.subheader(drawdown)
     strategy=''
 menu_data = [
-    {'icon': "fa fa-desktop", 'label':"Fundamental Indicators"},
     {'icon': "fa fa-signal", 'label':"Chart Analysis"},
     {'icon': "fa fa-angle-double-left", 'label':"Backtesting"},
+    {'icon': "fa fa-desktop", 'label':"Fundamental Indicators"},
     {'icon': "bi bi-pie-chart", 'label':"Portfolio Optimizer"},
     {'icon': "bi bi-twitter", 'label':"Twitter Analysis"},
 ]
