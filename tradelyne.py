@@ -1166,7 +1166,7 @@ elif dashboard=='Fundamental Indicators':
             #    cash_hist = cash_hist.rename(columns={'endDate': 'Year', 'cash': 'Cash in hand'})
             #    fig = px.bar(cash_hist, x=cash_hist['Year'], y=cash_hist['Cash in hand'], text_auto=True, labels=['Year', 'Cash'])
             #    fig.update_traces(marker_color='rgb(189,183,107)', textposition="outside", cliponaxis=False)
-                cashheader='''
+            cashheader='''
                 <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
                 <style>
                 .cashinhand {
@@ -1190,7 +1190,7 @@ elif dashboard=='Fundamental Indicators':
             #    asset_hist = asset_hist.rename(columns={'endDate': 'Year', 'totalAssets': 'Total Assets'})
             #    fig = px.bar(asset_hist, x=asset_hist['Year'], y=asset_hist['Total Assets'], text_auto=True, labels=['Year', 'Total Assets'])
             #    fig.update_traces(marker_color='rgb(255,218,185)', textposition="outside", cliponaxis=False)
-                assetheader='''
+            assetheader='''
                 <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
                 <style>
                 .assets {
@@ -1215,7 +1215,7 @@ elif dashboard=='Fundamental Indicators':
             #    ebit_hist = ebit_hist.rename(columns={'endDate': 'Year', 'ebit': 'EBIT'})
             #    fig = px.bar(ebit_hist, x=ebit_hist['Year'], y=ebit_hist['EBIT'], title="EBIT", text_auto=True, labels=['Year', 'EBIT'])
             #    fig.update_traces(marker_color='rgb(49,241,247)', textposition="outside", cliponaxis=False)
-                ebitheader='''
+            ebitheader='''
                 <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
                 <style>
                 .ebit {
