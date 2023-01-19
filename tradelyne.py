@@ -1078,41 +1078,41 @@ elif dashboard=='Fundamental Indicators':
             with price:
                 st.markdown(stockheader, unsafe_allow_html=True)
                 st.plotly_chart(fig, use_container_width=True)
-            graph1, graph2=st.columns(2)
+            #graph1, graph2=st.columns(2)
 
-            earnings_hist = si.get_earnings_history(tickerSymbol)
-            earnings_hist = pd.DataFrame.from_dict(earnings_hist)
-            earnings_hist = earnings_hist[['startdatetime', 'epsactual', 'epsestimate']]
-            earnings_hist = earnings_hist.dropna()
-            eps_date=earnings_hist['startdatetime'].iloc[0:8]
-            eps_date=eps_date.values.tolist()
-            for i in range(len(eps_date)):
-                eps_date[i]=eps_date[i][:10]
-            eps_date=eps_date[::-1]
-            epsactual=earnings_hist['epsactual'].iloc[0:8]
-            epsactual=epsactual.values.tolist()
-            epsactual=epsactual[::-1]
-            epsest=earnings_hist['epsestimate'].iloc[0:8]
-            epsest=epsest.values.tolist()
-            epsest=epsest[::-1]
-            fig = go.Figure()
-            fig.add_trace(go.Bar(
-                x=eps_date,
-                y=epsactual,
-                name='EPS Actual',
-                text=epsactual,
-                textposition="outside",
-                marker_color='rgb(102,205,170)'
-            ))
-            fig.add_trace(go.Bar(
-                x=eps_date,
-                y=epsest,
-                name='EPS Estimate',
-                text=epsest,
-                textposition="outside",
-                marker_color='rgb(255,160,122)'
-            ))
-            fig.update_layout(barmode='group', xaxis_tickangle=0)
+            #earnings_hist = si.get_earnings_history(tickerSymbol)
+            #earnings_hist = pd.DataFrame.from_dict(earnings_hist)
+            #earnings_hist = earnings_hist[['startdatetime', 'epsactual', 'epsestimate']]
+            #earnings_hist = earnings_hist.dropna()
+            #eps_date=earnings_hist['startdatetime'].iloc[0:8]
+            #eps_date=eps_date.values.tolist()
+            #for i in range(len(eps_date)):
+            #    eps_date[i]=eps_date[i][:10]
+            #eps_date=eps_date[::-1]
+            #epsactual=earnings_hist['epsactual'].iloc[0:8]
+            #epsactual=epsactual.values.tolist()
+            #epsactual=epsactual[::-1]
+            #epsest=earnings_hist['epsestimate'].iloc[0:8]
+            #epsest=epsest.values.tolist()
+            #epsest=epsest[::-1]
+            #fig = go.Figure()
+            #fig.add_trace(go.Bar(
+            #    x=eps_date,
+            #    y=epsactual,
+            #    name='EPS Actual',
+            #    text=epsactual,
+            #    textposition="outside",
+            #    marker_color='rgb(102,205,170)'
+            #))
+            #fig.add_trace(go.Bar(
+            #    x=eps_date,
+            #    y=epsest,
+            #    name='EPS Estimate',
+            #    text=epsest,
+            #    textposition="outside",
+            #    marker_color='rgb(255,160,122)'
+            #))
+            #fig.update_layout(barmode='group', xaxis_tickangle=0)
             epsheader='''
             <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
             <style>
@@ -1128,18 +1128,18 @@ elif dashboard=='Fundamental Indicators':
             <center> <p1 class='eps'> EPS Actual vs Estimate </p1> </center>
             </body>
             '''
-            with graph1:
-                st.markdown(epsheader, unsafe_allow_html=True)
-                st.plotly_chart(fig, use_container_width=True)
+            #with graph1:
+            #    st.markdown(epsheader, unsafe_allow_html=True)
+            #    st.plotly_chart(fig, use_container_width=True)
 
 
-            balance_sheet = si.get_balance_sheet(tickerSymbol)
-            balance_sheet = balance_sheet.transpose()
-            liab_hist = balance_sheet['totalLiab']
-            liab_hist = liab_hist.reset_index()
-            liab_hist = liab_hist.rename(columns={'endDate': 'Year', 'totalLiab': 'Total Liabities'})
-            fig = px.bar(liab_hist, x=liab_hist['Year'], y=liab_hist['Total Liabities'], text_auto=True, labels=['Year', 'Total Liabities'])
-            fig.update_traces(marker_color='rgb(135,206,235)', textposition="outside", cliponaxis=False)
+            #balance_sheet = si.get_balance_sheet(tickerSymbol)
+            #balance_sheet = balance_sheet.transpose()
+            #liab_hist = balance_sheet['totalLiab']
+            #liab_hist = liab_hist.reset_index()
+            #liab_hist = liab_hist.rename(columns={'endDate': 'Year', 'totalLiab': 'Total Liabities'})
+            #fig = px.bar(liab_hist, x=liab_hist['Year'], y=liab_hist['Total Liabities'], text_auto=True, labels=['Year', 'Total Liabities'])
+            #fig.update_traces(marker_color='rgb(135,206,235)', textposition="outside", cliponaxis=False)
             liabheader='''
             <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
             <style>
@@ -1155,17 +1155,17 @@ elif dashboard=='Fundamental Indicators':
             <center> <p1 class='liab'> Total Liabities </p1> </center>
             </body>
             '''
-            with graph2:
-                st.markdown(liabheader, unsafe_allow_html=True)
-                st.plotly_chart(fig, use_container_width=True)
+            #with graph2:
+            #    st.markdown(liabheader, unsafe_allow_html=True)
+            #    st.plotly_chart(fig, use_container_width=True)
 
-            graph1, graph2, graph3=st.columns(3)
-            with graph1:
-                cash_hist = balance_sheet['cash']
-                cash_hist = cash_hist.reset_index()
-                cash_hist = cash_hist.rename(columns={'endDate': 'Year', 'cash': 'Cash in hand'})
-                fig = px.bar(cash_hist, x=cash_hist['Year'], y=cash_hist['Cash in hand'], text_auto=True, labels=['Year', 'Cash'])
-                fig.update_traces(marker_color='rgb(189,183,107)', textposition="outside", cliponaxis=False)
+            #graph1, graph2, graph3=st.columns(3)
+            #with graph1:
+            #    cash_hist = balance_sheet['cash']
+            #    cash_hist = cash_hist.reset_index()
+            #    cash_hist = cash_hist.rename(columns={'endDate': 'Year', 'cash': 'Cash in hand'})
+            #    fig = px.bar(cash_hist, x=cash_hist['Year'], y=cash_hist['Cash in hand'], text_auto=True, labels=['Year', 'Cash'])
+            #    fig.update_traces(marker_color='rgb(189,183,107)', textposition="outside", cliponaxis=False)
                 cashheader='''
                 <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
                 <style>
@@ -1181,15 +1181,15 @@ elif dashboard=='Fundamental Indicators':
                 <center> <p1 class='cashinhand'> Cash in hand </p1> </center>
                 </body>
                 '''
-                st.markdown(cashheader, unsafe_allow_html=True)
-                st.plotly_chart(fig, use_container_width=True)
+            #    st.markdown(cashheader, unsafe_allow_html=True)
+            #    st.plotly_chart(fig, use_container_width=True)
 
-            with graph2:
-                asset_hist = balance_sheet['totalAssets']
-                asset_hist = asset_hist.reset_index()
-                asset_hist = asset_hist.rename(columns={'endDate': 'Year', 'totalAssets': 'Total Assets'})
-                fig = px.bar(asset_hist, x=asset_hist['Year'], y=asset_hist['Total Assets'], text_auto=True, labels=['Year', 'Total Assets'])
-                fig.update_traces(marker_color='rgb(255,218,185)', textposition="outside", cliponaxis=False)
+            #with graph2:
+            #    asset_hist = balance_sheet['totalAssets']
+            #    asset_hist = asset_hist.reset_index()
+            #    asset_hist = asset_hist.rename(columns={'endDate': 'Year', 'totalAssets': 'Total Assets'})
+            #    fig = px.bar(asset_hist, x=asset_hist['Year'], y=asset_hist['Total Assets'], text_auto=True, labels=['Year', 'Total Assets'])
+            #    fig.update_traces(marker_color='rgb(255,218,185)', textposition="outside", cliponaxis=False)
                 assetheader='''
                 <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
                 <style>
@@ -1205,16 +1205,16 @@ elif dashboard=='Fundamental Indicators':
                 <center> <p1 class='assets'> Total Assets </p1> </center>
                 </body>
                 '''
-                st.markdown(assetheader, unsafe_allow_html=True)
-                st.plotly_chart(fig, use_container_width=True)
-            with graph3:
-                income_statement=si.get_income_statement(tickerSymbol)
-                income_statement=income_statement.transpose()
-                ebit_hist = income_statement['ebit']
-                ebit_hist = ebit_hist.reset_index()
-                ebit_hist = ebit_hist.rename(columns={'endDate': 'Year', 'ebit': 'EBIT'})
-                fig = px.bar(ebit_hist, x=ebit_hist['Year'], y=ebit_hist['EBIT'], title="EBIT", text_auto=True, labels=['Year', 'EBIT'])
-                fig.update_traces(marker_color='rgb(49,241,247)', textposition="outside", cliponaxis=False)
+            #    st.markdown(assetheader, unsafe_allow_html=True)
+            #    st.plotly_chart(fig, use_container_width=True)
+            #with graph3:
+            #    income_statement=si.get_income_statement(tickerSymbol)
+            #    income_statement=income_statement.transpose()
+            #    ebit_hist = income_statement['ebit']
+            #    ebit_hist = ebit_hist.reset_index()
+            #    ebit_hist = ebit_hist.rename(columns={'endDate': 'Year', 'ebit': 'EBIT'})
+            #    fig = px.bar(ebit_hist, x=ebit_hist['Year'], y=ebit_hist['EBIT'], title="EBIT", text_auto=True, labels=['Year', 'EBIT'])
+            #    fig.update_traces(marker_color='rgb(49,241,247)', textposition="outside", cliponaxis=False)
                 ebitheader='''
                 <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
                 <style>
@@ -1230,9 +1230,9 @@ elif dashboard=='Fundamental Indicators':
                 <center> <p1 class='ebit'> EBIT </p1> </center>
                 </body>
                 '''
-                st.markdown(ebitheader, unsafe_allow_html=True)
-                st.plotly_chart(fig, use_container_width=True)
-            fundamentals, blank, data_show=st.columns([0.35,0.02,1])
+            #    st.markdown(ebitheader, unsafe_allow_html=True)
+            #    st.plotly_chart(fig, use_container_width=True)
+            #fundamentals, blank, data_show=st.columns([0.35,0.02,1])
             #if show_data:
             with fundamentals:
                 st.markdown('---')
@@ -1356,28 +1356,28 @@ elif dashboard=='Fundamental Indicators':
             st.write(' ')
             st.write(' ')
             st.write(' ')
-            #st.header("Stock News Sentiment Analyzer")
-            #if dashboard=='Fundamental Indicators':
-            #    st.subheader("Hourly and Daily Sentiment of {} Stock".format(tickerSymbol))
-            #    news_table = news_headlines(tickerSymbol)
-            #    parsed_news_df = parse_news(news_table)
-            #    parsed_and_scored_news = score_news(parsed_news_df)
-            #    fig_hourly = plot_hourly_sentiment(parsed_and_scored_news, tickerSymbol)
-            #    fig_daily = plot_daily_sentiment(parsed_and_scored_news, tickerSymbol) 
-            #    graph1, graph2=st.columns(2)
-            #    with graph1:
-            #        st.plotly_chart(fig_hourly, use_container_width=True)
-            #    with graph2:
-            #        st.plotly_chart(fig_daily, use_container_width=True)
+            st.header("Stock News Sentiment Analyzer")
+            if dashboard=='Fundamental Indicators':
+                st.subheader("Hourly and Daily Sentiment of {} Stock".format(tickerSymbol))
+                news_table = news_headlines(tickerSymbol)
+                parsed_news_df = parse_news(news_table)
+                parsed_and_scored_news = score_news(parsed_news_df)
+                fig_hourly = plot_hourly_sentiment(parsed_and_scored_news, tickerSymbol)
+                fig_daily = plot_daily_sentiment(parsed_and_scored_news, tickerSymbol) 
+                graph1, graph2=st.columns(2)
+                with graph1:
+                    st.plotly_chart(fig_hourly, use_container_width=True)
+                with graph2:
+                    st.plotly_chart(fig_daily, use_container_width=True)
 
-             #   description = """
-             #           The above chart averages the sentiment scores of {} stock hourly and daily.
-             #           The table below gives each of the most recent headlines of the stock and the negative, neutral, positive and an aggregated sentiment score.
-             #           Sentiments are given by the nltk.sentiment.vader Python library.
-             #           """.format(tickerSymbol)
+                description = """
+                        The above chart averages the sentiment scores of {} stock hourly and daily.
+                        The table below gives each of the most recent headlines of the stock and the negative, neutral, positive and an aggregated sentiment score.
+                        Sentiments are given by the nltk.sentiment.vader Python library.
+                        """.format(tickerSymbol)
                         
-             #   st.write(description)	 
-             #   st.table(parsed_and_scored_news)
+                st.write(description)	 
+                st.table(parsed_and_scored_news)
                     
 if dashboard=='Chart Analysis':
             screen, start, end, stock=st.columns([1.5,0.7,0.7,0.7])
