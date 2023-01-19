@@ -137,37 +137,19 @@ def news_headlines(ticker):
     return news_table
 	
 # parse news into dataframe
-def parse_news(news_table):
-    parsed_news = []
-    
-    for x in news_table.findAll('tr'):
-        # read the text from each tr tag into text
-        # get text from a only
-        text = x.a.get_text() 
-        # splite text in the td tag into a list 
-        date_scrape = x.td.text.split()
-        # if the length of 'date_scrape' is 1, load 'time' as the only element
-
-        if len(date_scrape) == 1:
-            time = date_scrape[0]
-            
-        # else load 'date' as the 1st element and 'time' as the second    
-        else:
-            date = date_scrape[0]
-            time = date_scrape[1]
-        
-        # Append ticker, date, time and headline as a list to the 'parsed_news' list
-        parsed_news.append([date, time, text])        
-        # Set column names
-        columns = ['date', 'time', 'headline']
-        # Convert the parsed_news list into a DataFrame called 'parsed_and_scored_news'
-        parsed_news_df = pd.DataFrame(parsed_news, columns=columns)        
-        # Create a pandas datetime object from the strings in 'date' and 'time' column
-        parsed_news_df['datetime'] = pd.to_datetime(parsed_news_df['date'] + ' ' + parsed_news_df['time'])
-        
+def parsed_news():
+    # Get financials data
+    news_all=yn.get_yf_rss(tickerSymbol)
+    news_all=pd.DataFrame.from_dict(news_all)
+    news_all=news_all.reset_index()
+    news_published=news_all['published']
+    news_time=pd.to_datetime(news_published)
+    news=news_all['summary']
+    parsed_news_df=pd.concat([news, news_time], axis=1)
+    parsed_news_df.rename(columns = {'summary':'headline', 'published':'datetime'}, inplace = True)
     return parsed_news_df
-        
 def score_news(parsed_news_df):
+    # Instantiate the sentiment intensity analyzer
     vader = SentimentIntensityAnalyzer()
     
     # Iterate through the headlines and get the polarity scores using vader
@@ -177,18 +159,19 @@ def score_news(parsed_news_df):
     scores_df = pd.DataFrame(scores)
 
     # Join the DataFrames of the news and the list of dicts
-    parsed_and_scored_news = parsed_news_df.join(scores_df, rsuffix='_right')             
-    parsed_and_scored_news = parsed_and_scored_news.set_index('datetime')    
-    parsed_and_scored_news = parsed_and_scored_news.drop(['date', 'time'], 1)          
-    parsed_and_scored_news = parsed_and_scored_news.rename(columns={"compound": "sentiment_score"})
+    parsed_and_scored_news = parsed_news_df.join(scores_df, rsuffix='_right') 
 
+    parsed_and_scored_news = parsed_and_scored_news.set_index('datetime')    
+        
+    parsed_and_scored_news = parsed_and_scored_news.rename(columns={"compound": "sentiment_score"})
+    #parsed_and_scored_news=parsed_and_scored_news.reset_index()
     return parsed_and_scored_news
 
 def plot_hourly_sentiment(parsed_and_scored_news, ticker):
-   
+    print(parsed_and_scored_news)
     # Group by date and ticker columns from scored_news and calculate the mean
     mean_scores = parsed_and_scored_news.resample('H').mean()
-
+    print(mean_scores)
     # Plot a bar chart with plotly
     fig = px.bar(mean_scores, x=mean_scores.index, y='sentiment_score', title = ticker + ' Hourly Sentiment Scores')
     return fig # instead of using fig.show(), we return fig and turn it into a graphjson object for displaying in web page later
@@ -1315,7 +1298,7 @@ elif dashboard=='Fundamental Indicators':
                 st.dataframe(inside)
                 st.write('___________________________')
                 st.write('')
-                news=get_news()
+                #news=get_news()
                 insiderheader='''
                         <link href='https://fonts.googleapis.com/css?family=Montserrat' rel="stylesheet">
                         <style>
@@ -1338,9 +1321,9 @@ elif dashboard=='Fundamental Indicators':
                 st.markdown(insiderdataheader, unsafe_allow_html=True)
                 #st.dataframe(news, width=10000)
                 st.write(' ')
-                tickers = si.tickers_sp500()
-                recommendations = []
-                print(news)
+                #tickers = si.tickers_sp500()
+                #recommendations = []
+                #print(news)
                 #for i in range(len(news)):
                 #    headline=news['News Headline'][i]
                 #    link=news['Article Link'][i]
@@ -1358,8 +1341,8 @@ elif dashboard=='Fundamental Indicators':
             st.header("Stock News Sentiment Analyzer")
             if dashboard=='Fundamental Indicators':
                 st.subheader("Hourly and Daily Sentiment of {} Stock".format(tickerSymbol))
-                news_table = news_headlines(tickerSymbol)
-                parsed_news_df = parse_news(news_table)
+                #news_table = news_headlines(tickerSymbol)
+                parsed_news_df = parsed_news(news_table)
                 parsed_and_scored_news = score_news(parsed_news_df)
                 fig_hourly = plot_hourly_sentiment(parsed_and_scored_news, tickerSymbol)
                 fig_daily = plot_daily_sentiment(parsed_and_scored_news, tickerSymbol) 
