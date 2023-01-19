@@ -1333,8 +1333,7 @@ elif dashboard=='Fundamental Indicators':
                 st.markdown(insiderdataheader, unsafe_allow_html=True)
                 #st.dataframe(news, width=10000)
                 st.write(' ')
-		get_news=get_news()
-                #tickers = si.tickers_sp500()
+                get_news_info=get_news()
                 #recommendations = []
                 #print(news)
                 #for i in range(len(news)):
