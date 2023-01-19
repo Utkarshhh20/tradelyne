@@ -1323,6 +1323,7 @@ elif dashboard=='Fundamental Indicators':
                 #st.dataframe(news, width=10000)
                 st.write(' ')
                 news=get_news()
+		st.write(news)
                 for i in range(15):
                     headline=news['News Headline'][i]
                     link=news['Article Link'][i]
