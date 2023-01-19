@@ -1342,7 +1342,7 @@ elif dashboard=='Fundamental Indicators':
             if dashboard=='Fundamental Indicators':
                 st.subheader("Hourly and Daily Sentiment of {} Stock".format(tickerSymbol))
                 #news_table = news_headlines(tickerSymbol)
-                parsed_news_df = parsed_news(news_table)
+                parsed_news_df = parsed_news()
                 parsed_and_scored_news = score_news(parsed_news_df)
                 fig_hourly = plot_hourly_sentiment(parsed_and_scored_news, tickerSymbol)
                 fig_daily = plot_daily_sentiment(parsed_and_scored_news, tickerSymbol) 
