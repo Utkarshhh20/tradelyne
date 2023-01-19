@@ -128,7 +128,6 @@ count=1
 newscount=0
 additional=[]
 def get_news():
-    newscount=0
     news_all=yn.get_yf_rss(tickerSymbol)
     news_all=pd.DataFrame.from_dict(news_all)
     news_all=news_all.reset_index()
@@ -136,17 +135,7 @@ def get_news():
     news_headline=news_all['title']
     news=pd.concat([news_headline, news_link], axis=1)
     news.rename(columns = {'title':'News Headline', 'link':'Article Link'}, inplace = True)
-    print(news)
-    for i in range(16):
-                    headline=news['News Headline'][i]
-                    link=news['Article Link'][i]
-                    st.write(f"{headline}: [More on this article]({link})")
-                    newscount=newscount+1
-                    if newscount<13:
-                        st.write('____________________')
-                    if newscount==13:
-                        break
-    return news_all
+    return news
 	
 # parse news into dataframe
 def parsed_news():
@@ -1333,8 +1322,16 @@ elif dashboard=='Fundamental Indicators':
                 st.markdown(insiderdataheader, unsafe_allow_html=True)
                 #st.dataframe(news, width=10000)
                 st.write(' ')
-                get_news_info=get_news()
-                #recommendations = []
+                news=get_news()
+                for i in range(15):
+                    headline=news['News Headline'][i]
+                    link=news['Article Link'][i]
+                    st.write(f"{headline}: [More on this article]({link})")
+                    newscount=newscount+1
+                    if newscount<13:
+                        st.write('____________________')
+                    if newscount==13:
+                        break
                 #print(news)
                 #for i in range(len(news)):
                 #    headline=news['News Headline'][i]
