@@ -142,9 +142,9 @@ def get_news():
                     link=news['Article Link'][i]
                     st.write(f"{headline}: [More on this article]({link})")
                     newscount=newscount+1
-                    if newscount<15:
+                    if newscount<13:
                         st.write('____________________')
-                    if newscount==15:
+                    if newscount==13:
                         break
     return news_all
 	
