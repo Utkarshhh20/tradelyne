@@ -18,6 +18,7 @@ from bs4 import BeautifulSoup as bs
 from string import Template
 from datetime import date, timedelta
 from yahoo_fin import stock_info as si 
+import yahoo_fin.news as yn
 from pandas_datareader import data as pdr
 from pypfopt.discrete_allocation import DiscreteAllocation, get_latest_prices
 from pypfopt import EfficientFrontier
