@@ -1231,7 +1231,7 @@ elif dashboard=='Fundamental Indicators':
                 '''
             #    st.markdown(ebitheader, unsafe_allow_html=True)
             #    st.plotly_chart(fig, use_container_width=True)
-            #fundamentals, blank, data_show=st.columns([0.35,0.02,1])
+            fundamentals, blank, data_show=st.columns([0.35,0.02,1])
             #if show_data:
             with fundamentals:
                 st.markdown('---')
