@@ -127,15 +127,26 @@ oneyr= today - timedelta(days=365)
 count=1
 newscount=0
 additional=[]
-def news_headlines(ticker):
-    url = finviz_url + ticker
-    req = Request(url=url,headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:20.0) Gecko/20100101 Firefox/20.0'}) 
-    response = urlopen(req)    
-    # Read the contents of the file into 'html'
-    html = bs(response)
-    # Find 'news-table' in the Soup and load it into 'news_table'
-    news_table = html.find(id='news-table')
-    return news_table
+def get_news():
+    newscount=0
+    news_all=yn.get_yf_rss(tickerSymbol)
+    news_all=pd.DataFrame.from_dict(news_all)
+    news_all=news_all.reset_index()
+    news_link=news_all['link']
+    news_headline=news_all['title']
+    news=pd.concat([news_headline, news_link], axis=1)
+    news.rename(columns = {'title':'News Headline', 'link':'Article Link'}, inplace = True)
+    print(news)
+    for i in range(16):
+                    headline=news['News Headline'][i]
+                    link=news['Article Link'][i]
+                    st.write(f"{headline}: [More on this article]({link})")
+                    newscount=newscount+1
+                    if newscount<15:
+                        st.write('____________________')
+                    if newscount==15:
+                        break
+    return news_all
 	
 # parse news into dataframe
 def parsed_news():
@@ -1322,6 +1333,7 @@ elif dashboard=='Fundamental Indicators':
                 st.markdown(insiderdataheader, unsafe_allow_html=True)
                 #st.dataframe(news, width=10000)
                 st.write(' ')
+		get_news=get_news()
                 #tickers = si.tickers_sp500()
                 #recommendations = []
                 #print(news)
