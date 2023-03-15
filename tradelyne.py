@@ -1791,11 +1791,9 @@ if dashboard=='Portfolio Optimizer':
         # Get Stock Prices using pandas_datareader Library	
         stocks_df = pdr.get_data_yahoo(tickers, start = start_date, end = end_date)['Adj Close']
         sp500=pdr.get_data_yahoo('SPY', start = start_date, end = end_date)['Adj Close']
-	st.write('hi')
-            # Plot Individual Stock Prices
+        # Plot Individual Stock Prices
         fig_price = px.line(stocks_df, title='')
-            # Plot Individual Cumulative Returns
-	st.write('hi')	
+        # Plot Individual Cumulative Returns	
         fig_cum_returns = plot_cum_returns(stocks_df, '')
             # Calculatge and Plot Correlation Matrix between Stocks
         corr_df = stocks_df.corr().round(2)
